@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.ziscws.dao;
+package com.ziscws.entidades;
 
 import java.util.Date;
 import javax.persistence.Column;
@@ -27,7 +27,7 @@ import org.hibernate.annotations.FetchMode;
  * @author Avanti Premium
  */
 @Entity
-@Table(name = "ALERTA", schema = "dbo")
+@Table(name = "TBL_ALERTA", schema = "dbo")
 class Alerta {
 
     @Id

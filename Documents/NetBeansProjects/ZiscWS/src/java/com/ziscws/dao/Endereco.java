@@ -38,6 +38,4 @@ class Endereco {
     private Usuario usuario;
     
     
-    
-    
 }

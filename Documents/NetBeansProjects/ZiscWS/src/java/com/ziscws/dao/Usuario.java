@@ -21,34 +21,44 @@ import javax.persistence.Table;
  * @author Avanti Premium
  */
 @Entity
-@Table(name = "TBL_USUARIO", schema = "dba")
+@Table(name = "TBL_USUARIO", schema = "dbo")
 public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "ID_USUARIO")
     private int id;
-    
+
     @Column(name = "NOME", length = 50, nullable = false)
     private String nome;
-    
+
     @Column(name = "EMAIL", length = 50, nullable = false, unique = true)
     private String email;
-    
+
     @Column(name = "CPF", length = 15, nullable = false, unique = true)
     private String cpf;
-    
+
     @Column(name = "CELULAR", length = 15, nullable = false)
     private String celular;
-    
+
     @Column(name = "SENHA", length = 32, nullable = false)
     private char[] senha;
-    
+
     @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Endereco> enderecos;
-    
+
     @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Alerta> alertas;
+
+    public Usuario() {
+    }
+
+    public Usuario(String nome, String email, String cpf, String celular) {
+        this.nome = nome;
+        this.email = email;
+        this.cpf = cpf;
+        this.celular = celular;
+    }
 
     public int getId() {
         return id;
@@ -113,7 +123,5 @@ public class Usuario {
     public void setAlertas(List<Alerta> alertas) {
         this.alertas = alertas;
     }
-    
-    
 
 }

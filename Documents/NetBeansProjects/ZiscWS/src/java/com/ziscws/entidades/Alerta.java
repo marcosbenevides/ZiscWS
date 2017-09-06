@@ -28,7 +28,7 @@ import org.hibernate.annotations.FetchMode;
  */
 @Entity
 @Table(name = "TBL_ALERTA", schema = "dbo")
-class Alerta {
+public class Alerta {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

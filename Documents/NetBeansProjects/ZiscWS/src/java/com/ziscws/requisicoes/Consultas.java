@@ -5,6 +5,8 @@
  */
 package com.ziscws.requisicoes;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.ziscws.entidades.*;
 import com.ziscws.hibernate.HibernateUtil;
 import java.io.UnsupportedEncodingException;
@@ -13,8 +15,10 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 
 /**
  *
@@ -44,53 +48,27 @@ public class Consultas {
     }
 
     @SuppressWarnings("unchecked")
-    public Boolean requisicaoLogin(String email, String senha) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+    public String buscaAlerta(String latitude, String longitude) {
 
-        Usuario user = new Usuario();
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        session.beginTransaction();
+        Criteria criteria = session.createCriteria(Alerta.class);
+        List<Alerta> totalAlertas = criteria.list();
+        List<Alerta> alertas = new ArrayList<>();
 
-        Session s = HibernateUtil.getSessionFactory().getCurrentSession();
-        s.beginTransaction();
-
-        Query q = s.createQuery("from Usuario user where user.email = :email");
-//        Query q = s.createSQLQuery("SELECT U.nome AS [Nome], U.email AS [Email] , S.\"hash\" AS [Password]\n"
-//                + "FROM SEGURANCA AS S INNER JOIN USUARIO AS U ON S.idusuario = U.idusuario\n"
-//                + " WHERE U.email like :email");
-        q.setParameter("email", email);
-
-        List<Usuario> lista = (List<Usuario>) q.list();
-        char senha1[] = senha.toCharArray();
-        
-        if (Arrays.equals(lista.get(0).getSenha(), senha1)) {
-            s.getTransaction().commit();
-            return true;
-        }
-        s.getTransaction().commit();
-        return false;
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<Alerta> buscaAlerta(String latitude, String longitude) {
-
-        List<Alerta> listaGeral = conAlertaGeral();
-        List<Alerta> listatotal = new ArrayList<>();
-
-        for (int i = 0; i < listaGeral.size(); i++) {
-            if (distancia2Pontos(listaGeral.get(i).getLatitude(),
-                    listaGeral.get(i).getLongitude(),
+        for (int i = 0; i < totalAlertas.size(); i++) {
+            if (distancia2Pontos(totalAlertas.get(i).getLatitude(),
+                    totalAlertas.get(i).getLongitude(),
                     latitude,
                     longitude)) {
-                listatotal.add(listaGeral.get(i));
+                alertas.add(totalAlertas.get(i));
             }
         }
 
-        List<Alerta> lista1 = new ArrayList<>();
-        System.err.println("lista do tamanho " + listatotal.size());
-        for (int i = 0; i < listatotal.size(); i++) {
-            Alerta alerta = listatotal.get(i);
-            Alerta alerta1 = new Alerta();
-            lista1.add(alerta1);
-        }
-        return lista1;
+        Gson gson = new Gson();
+        String json = gson.toJson(alertas);
+        session.close();
+        return json;
     }
 
     public Boolean distancia2Pontos(String latA, String longA, String latB, String longB) {
@@ -109,13 +87,13 @@ public class Consultas {
         return dist <= 2000;
     }
 
-    public List<Alerta> conAlertaGeral() {
+    public List<Alerta> buscaTodosAlertas() {
         Session s = HibernateUtil.getSessionFactory().getCurrentSession();
         s.beginTransaction();
-        Query q = s.createQuery("from Alerta");
-        List<Alerta> lista = (List<Alerta>) q.list();
-        s.getTransaction().commit();
-        return lista;
+        Criteria criteria = s.createCriteria(Alerta.class);
+        List retorno = criteria.list();
+        s.close();
+        return retorno;
     }
 
     @SuppressWarnings("unchecked")

@@ -5,7 +5,8 @@
  */
 package com.ziscws.entidades;
 
-import java.util.Date;
+import java.sql.Date;
+import java.sql.Timestamp;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -21,6 +22,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Type;
 
 /**
  *
@@ -41,7 +43,8 @@ public class Alerta {
     @Cascade(CascadeType.SAVE_UPDATE)
     private Usuario usuario;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @Type(type = "date")
+    @Column(name = "LOG_HORA")
     private Date logHora;
 
     @Column(name = "LONGITUDE", length = 80, nullable = false)

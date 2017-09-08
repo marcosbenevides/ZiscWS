@@ -5,39 +5,33 @@
  */
 package com.ziscws.requisicoes;
 
-import com.google.gson.Gson;
-import com.ziscws.entidades.Alerta;
-import java.util.List;
-import javax.ws.rs.GET;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 
 /**
  *
  * @author Marcos Benevides
  */
-
-    @Path("/ConsultaAlerta/{latitude}/{longitude}")
+@Path("/ConsultaAlerta/")
 public class ConsultaAlerta {
 
-    @GET
+    @POST
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
-    public GenericEntity<List<Alerta>> getAlerta(
-            @PathParam("latitude") String latitude,
-            @PathParam("longitude") String longitude) {
+    public String getAlerta(
+            @FormParam("latitude") String latitude,
+            @FormParam("longitude") String longitude) {
 
         Consultas consultas = new Consultas();
-         Gson gson = new Gson();
 
-        List<Alerta> lista = consultas.buscaAlerta(latitude, longitude);
-            System.err.println("AQUI 2");
-        
-        GenericEntity<List<Alerta>> entidade = new GenericEntity<List<Alerta>>(lista){};
-        
-        return entidade;
-        
+        // List<Alerta> lista = consultas.buscaAlerta(latitude, longitude);
+        //GenericEntity<List<Alerta>> entidade = new GenericEntity<List<Alerta>>(lista) {};
+
+        return consultas.buscaAlerta(latitude, longitude);
+
     }
 }

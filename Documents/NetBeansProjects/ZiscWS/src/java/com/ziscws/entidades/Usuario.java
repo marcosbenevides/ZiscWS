@@ -22,7 +22,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "TBL_USUARIO", schema = "dbo")
-public class Usuario {
+public class Usuario{
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -42,13 +42,13 @@ public class Usuario {
     private String celular;
 
     @Column(name = "SENHA", length = 32, nullable = false)
-    private char[] senha;
+    private String senha;
 
     @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Endereco> enderecos;
+    transient private List<Endereco> enderecos;
 
     @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Alerta> alertas;
+   transient private List<Alerta> alertas;
 
     public Usuario() {
     }
@@ -100,11 +100,11 @@ public class Usuario {
         this.celular = celular;
     }
 
-    public char[] getSenha() {
+    public String getSenha() {
         return senha;
     }
 
-    public void setSenha(char[] senha) {
+    public void setSenha(String senha) {
         this.senha = senha;
     }
 

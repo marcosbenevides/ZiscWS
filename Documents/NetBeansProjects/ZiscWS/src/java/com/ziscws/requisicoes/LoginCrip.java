@@ -5,7 +5,11 @@
  */
 package com.ziscws.requisicoes;
 
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.ziscws.dao.UsuarioDAO;
 import com.ziscws.entidades.Usuario;
 import com.ziscws.hibernate.HibernateUtil;
 import java.io.UnsupportedEncodingException;
@@ -27,7 +31,7 @@ import org.hibernate.criterion.Restrictions;
  * @author Marcos Benevides
  */
 @Path("/login/")
-public class ConsultaLoginCrip {
+public class LoginCrip {
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -35,8 +39,11 @@ public class ConsultaLoginCrip {
     public String loginCrip(@FormParam("email") String email,
             @FormParam("password") String password) throws NoSuchAlgorithmException, UnsupportedEncodingException, CloneNotSupportedException {
 
+        UsuarioDAO dao = new UsuarioDAO();
         email = new String(Base64.getDecoder().decode(email));
         password = new String(Base64.getDecoder().decode(password));
+
+        System.err.println("Email: " + email + "\nPassword: " + password);
 
         MessageDigest digest = MessageDigest.getInstance("MD5");
         byte[] messageDigest = digest.digest(password.getBytes("UTF-8"));
@@ -47,17 +54,7 @@ public class ConsultaLoginCrip {
         }
         password = new String(hex);
 
-        Gson gson = new Gson();
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        session.beginTransaction();
-
-        Criteria criteria = session.createCriteria(Usuario.class);
-        criteria.add(Restrictions.eq("email", email));
-        criteria.add(Restrictions.eq("senha", password));
-        
-        String json = gson.toJson((Usuario) criteria.uniqueResult());
-        session.close();
-        return json;
+        return dao.login(email, password);
     }
 
 }

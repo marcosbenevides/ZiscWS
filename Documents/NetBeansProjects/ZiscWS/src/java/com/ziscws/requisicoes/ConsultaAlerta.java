@@ -28,9 +28,6 @@ public class ConsultaAlerta {
 
         Consultas consultas = new Consultas();
 
-        // List<Alerta> lista = consultas.buscaAlerta(latitude, longitude);
-        //GenericEntity<List<Alerta>> entidade = new GenericEntity<List<Alerta>>(lista) {};
-
         return consultas.buscaAlerta(latitude, longitude);
 
     }

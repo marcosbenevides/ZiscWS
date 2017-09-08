@@ -5,20 +5,17 @@
  */
 package com.ziscws.requisicoes;
 
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.google.gson.GsonBuilder;
 import com.ziscws.entidades.*;
 import com.ziscws.hibernate.HibernateUtil;
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 
 /**
  *
@@ -66,6 +63,19 @@ public class Consultas {
         }
 
         Gson gson = new Gson();
+        GsonBuilder gBuilder = new GsonBuilder();
+        gBuilder.setExclusionStrategies(new ExclusionStrategy() {
+            @Override
+            public boolean shouldSkipField(FieldAttributes fa) {
+                return fa.getName().contains("senha");
+            }
+
+            @Override
+            public boolean shouldSkipClass(Class<?> type) {
+                return false;
+            }
+        });
+        gson = gBuilder.create();
         String json = gson.toJson(alertas);
         session.close();
         return json;

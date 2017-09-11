@@ -48,9 +48,10 @@ Contributor(s):
     <property name="hibernate.current_session_context_class">thread</property>
     <property name="hibernate.show_sql">true</property>
     <property name="hibernate.format_sql">true</property>
-    <property name="hibernate.dialect">org.hibernate.dialect.DB2Dialect</property>
+    <property name="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</property>
     <mapping class="com.ziscws.entidades.Usuario"/>
     <mapping class="com.ziscws.entidades.Endereco"/>
     <mapping class="com.ziscws.entidades.Alerta"/>
+    <mapping class="com.ziscws.entidades.LogLogin"/>
   </session-factory>
 </hibernate-configuration>

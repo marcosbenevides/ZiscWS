@@ -27,13 +27,13 @@ import org.hibernate.annotations.Type;
  * @author Avanti Premium
  */
 @Entity
-@Table(name = "TBL_LOG_LOGIN")
+@Table(name = "TBL_LOG_LOGIN", schema = "dbo")
 public class LogLogin implements Serializable {
 
     @Id
     @Column(name = "ID_LOG")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ID_USUARIO", insertable = true, updatable = true)
@@ -51,7 +51,7 @@ public class LogLogin implements Serializable {
     @Column(name = "TIPO")
     private String tipo;
 
-    public LogLogin(int id, Usuario usuario, Date log, String ip, String tipo) {
+    public LogLogin(long id, Usuario usuario, Date log, String ip, String tipo) {
         this.id = id;
         this.usuario = usuario;
         this.log = log;
@@ -63,11 +63,11 @@ public class LogLogin implements Serializable {
     }
     
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

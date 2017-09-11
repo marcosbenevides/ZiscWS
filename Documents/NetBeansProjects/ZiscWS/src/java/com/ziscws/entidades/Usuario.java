@@ -22,12 +22,12 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "TBL_USUARIO", schema = "dbo")
-public class Usuario{
+public class Usuario {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_USUARIO")
-    private int id;
+    private long id;
 
     @Column(name = "NOME", length = 50, nullable = false)
     private String nome;
@@ -48,7 +48,15 @@ public class Usuario{
     transient private List<Endereco> enderecos;
 
     @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-   transient private List<Alerta> alertas;
+    transient private List<Alerta> alertas;
+
+    public Usuario(String nome, String email, String cpf, String celular, String senha) {
+        this.nome = nome;
+        this.email = email;
+        this.cpf = cpf;
+        this.celular = celular;
+        this.senha = senha;
+    }
 
     public Usuario() {
     }
@@ -60,11 +68,11 @@ public class Usuario{
         this.celular = celular;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

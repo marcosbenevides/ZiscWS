@@ -28,9 +28,9 @@ import org.hibernate.annotations.FetchMode;
 class Endereco {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_ENDERECO")
-    private int id;
+    private long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ID_USUARIO", insertable = true, updatable = true)
@@ -64,11 +64,11 @@ class Endereco {
         this.latitude = latitude;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

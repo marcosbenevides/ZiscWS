@@ -5,7 +5,10 @@
  */
 package com.ziscws.entidades;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,6 +18,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import org.hibernate.annotations.Cascade;
 
 /**
  *
@@ -44,11 +48,13 @@ public class Usuario {
     @Column(name = "SENHA", length = 32, nullable = false)
     private String senha;
 
-    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    transient private List<Endereco> enderecos;
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    transient private Set<Endereco> enderecos = new HashSet<>();
 
-    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    transient private List<Alerta> alertas;
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    transient private Set<Alerta> alertas = new HashSet<>();
 
     public Usuario(String nome, String email, String cpf, String celular, String senha) {
         this.nome = nome;
@@ -61,11 +67,22 @@ public class Usuario {
     public Usuario() {
     }
 
-    public Usuario(String nome, String email, String cpf, String celular) {
+    public Usuario(String nome, String email, String cpf, String celular, String senha, Alerta alerta) {
         this.nome = nome;
         this.email = email;
         this.cpf = cpf;
         this.celular = celular;
+        this.senha = senha;
+        this.alertas.add(alerta);
+    }
+
+    public Usuario(Usuario usuario) {
+        this.id = usuario.getId();
+        this.nome = usuario.getNome();
+        this.email = usuario.getEmail();
+        this.cpf = usuario.getCpf();
+        this.celular = usuario.getCelular();
+        this.senha = usuario.getSenha();
     }
 
     public long getId() {
@@ -116,20 +133,20 @@ public class Usuario {
         this.senha = senha;
     }
 
-    public List<Endereco> getEnderecos() {
+    public Set<Endereco> getEnderecos() {
         return enderecos;
     }
 
-    public void setEnderecos(List<Endereco> enderecos) {
-        this.enderecos = enderecos;
+    public void setEnderecos(Endereco enderecos) {
+        this.enderecos.add(enderecos);
     }
 
-    public List<Alerta> getAlertas() {
+    public Set<Alerta> getAlertas() {
         return alertas;
     }
 
-    public void setAlertas(List<Alerta> alertas) {
-        this.alertas = alertas;
+    public void setAlertas(Alerta alerta) {
+        this.alertas.add(alerta);
     }
 
 }

@@ -5,20 +5,14 @@
  */
 package com.ziscws.dao;
 
-import com.google.gson.ExclusionStrategy;
-import com.google.gson.FieldAttributes;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.ziscws.entidades.Usuario;
 import com.ziscws.hibernate.HibernateUtil;
+import com.ziscws.util.JsonFactory;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Restrictions;
 
@@ -31,6 +25,7 @@ public class UsuarioDAO {
     private Session session;
     private Criteria criteria;
     private Disjunction disjunction;
+    private JsonFactory factory = new JsonFactory();
 
     public void beginTransaction() {
 
@@ -47,19 +42,31 @@ public class UsuarioDAO {
      * restrições completar com String null.
      *
      * @param email
-     * @param cpf
-     * @param id
      * @param restricao
      * @return Json String
      */
-    public String buscaUsuario(String email, String restricao) {
-
+    public String buscaUsuarioJson(String email, String restricao) {
         beginTransaction();
         criteria.add(Restrictions.eq("email", email));
-        String json = toJsonRestriction((Usuario) criteria.uniqueResult(), restricao);
+        String json = factory.toJsonRestriction(criteria.uniqueResult(), restricao);
         session.close();
 
         return json;
+
+    }
+
+    /**
+     * Busca usuario com base no ID
+     * @param id
+     * @return Usuario
+     */
+    public Usuario buscaUsuario(Long id) {
+
+        beginTransaction();
+        criteria.add(Restrictions.eq("id", id));
+        Usuario usuario = new Usuario((Usuario) criteria.uniqueResult());
+        session.close();
+        return usuario;
 
     }
 
@@ -77,39 +84,10 @@ public class UsuarioDAO {
         criteria.add(Restrictions.eq("email", email));
         criteria.add(Restrictions.eq("senha", password));
 
-        String json = toJsonRestriction((Usuario) criteria.uniqueResult(), "senha");
+        String json = factory.toJsonRestriction((Usuario) criteria.uniqueResult(), "senha");
 
         session.close();
         return json;
-
-    }
-
-    /**
-     * Cria String Json com o objeto e com a restricao de campo passado, caso
-     * não tenha restrição, passar a String null como parametro
-     *
-     * @param object
-     * @param restriction
-     * @return String Json
-     */
-    public String toJsonRestriction(Object object, String restriction) {
-
-        GsonBuilder builder = new GsonBuilder();
-        builder.setExclusionStrategies(new ExclusionStrategy() {
-            @Override
-            public boolean shouldSkipField(FieldAttributes fa) {
-                return fa.getName().contains(restriction);
-            }
-
-            @Override
-            public boolean shouldSkipClass(Class<?> type) {
-                return false;
-            }
-        });
-
-        Gson gson = builder.create();
-
-        return gson.toJson(object);
     }
 
     /**
@@ -134,19 +112,18 @@ public class UsuarioDAO {
      * @param usuario
      * @return usuario cadastrado.
      */
-    public String cadastrarUsuario(Usuario usuario) {
+    public String novoUsuario(Usuario usuario) {
         beginTransaction();
 
-        Gson gson = new Gson();
-        session.save(usuario);
+        session.saveOrUpdate(usuario);
         session.getTransaction().commit();
 
-        String json = buscaUsuario(usuario.getEmail(), "senha");
-        return json;
+        return buscaUsuarioJson(usuario.getEmail(), "senha");
     }
 
     /**
      * Converte a senha do usuario em uma String criptografada
+     *
      * @param password
      * @return String md5
      * @throws UnsupportedEncodingException

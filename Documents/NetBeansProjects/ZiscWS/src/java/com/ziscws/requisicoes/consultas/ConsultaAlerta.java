@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-import com.ziscws.requisicoes.consultas.Consultas;
+import com.ziscws.dao.AlertaDAO;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -12,12 +12,18 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 /**
- *
+ * WebService para consultar alertas criados de acordo com uma localidade
  * @author Marcos Benevides
  */
-@Path("/ConsultaAlerta/")
+@Path("/consultaalerta/")
 public class ConsultaAlerta {
 
+    /**
+     * Método para consultar alertas de acordo com uma localidade
+     * @param latitude
+     * @param longitude
+     * @return String Json dos Alertas a serem criados.
+     */
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
@@ -25,9 +31,8 @@ public class ConsultaAlerta {
             @FormParam("latitude") String latitude,
             @FormParam("longitude") String longitude) {
 
-        Consultas consultas = new Consultas();
+        AlertaDAO dao = new AlertaDAO();
 
-        return consultas.buscaAlerta(latitude, longitude);
-
+        return dao.buscaPorLocal(longitude, latitude);
     }
 }

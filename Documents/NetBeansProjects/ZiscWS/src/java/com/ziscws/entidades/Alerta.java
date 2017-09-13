@@ -5,6 +5,7 @@
  */
 package com.ziscws.entidades;
 
+import java.io.Serializable;
 import java.sql.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,17 +28,17 @@ import org.hibernate.annotations.Type;
  */
 @Entity
 @Table(name = "TBL_ALERTA", schema = "dbo")
-public class Alerta {
+public class Alerta implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_ALERTA")
     private long id;
-
+    
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ID_USUARIO", insertable = true, updatable = true)
     @Fetch(FetchMode.JOIN)
-    @Cascade(CascadeType.SAVE_UPDATE)
+    @Cascade(CascadeType.ALL)
     private Usuario usuario;
 
     @Type(type = "date")
@@ -63,8 +64,7 @@ public class Alerta {
     @Column(name = "ATIVO", nullable = false)
     private Boolean ativo;
 
-    public Alerta(Usuario usuario, Date logHora, String longitude, String latitude, String bairro, String cidade, String estado, String observacao, String tipo, Boolean ePositivo, Boolean ativo) {
-        this.usuario = usuario;
+    public Alerta(Date logHora, String longitude, String latitude, String bairro, String cidade, String estado, String observacao, String tipo, Boolean ePositivo, Boolean ativo) {
         this.logHora = logHora;
         this.longitude = longitude;
         this.latitude = latitude;

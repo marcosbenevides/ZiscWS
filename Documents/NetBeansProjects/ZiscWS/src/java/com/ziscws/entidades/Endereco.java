@@ -5,6 +5,7 @@
  */
 package com.ziscws.entidades;
 
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -25,7 +26,7 @@ import org.hibernate.annotations.FetchMode;
  */
 @Entity
 @Table(name = "TBL_ENDERECO", schema = "dbo")
-class Endereco {
+public class Endereco {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,7 +36,7 @@ class Endereco {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ID_USUARIO", insertable = true, updatable = true)
     @Fetch(FetchMode.JOIN)
-    @Cascade(CascadeType.SAVE_UPDATE)
+    @Cascade(CascadeType.ALL)
     private Usuario usuario;
     
     @Column(name = "ALIAS", length = 20, nullable = false)

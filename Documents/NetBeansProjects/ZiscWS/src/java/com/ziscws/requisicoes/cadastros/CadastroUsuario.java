@@ -39,9 +39,8 @@ public class CadastroUsuario {
             String json = gson.toJson("Email já cadastrado!");
             return json;
         }
-
         String senhaCrip = dao.md5Converte(senha);
         usuario = new Usuario(nome, email, cpf, celular, senhaCrip);
-        return dao.cadastrarUsuario(usuario);
+        return dao.novoUsuario(usuario);
     }
 }

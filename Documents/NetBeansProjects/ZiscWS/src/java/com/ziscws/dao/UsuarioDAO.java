@@ -7,10 +7,14 @@ package com.ziscws.dao;
 
 import com.ziscws.entidades.Usuario;
 import com.ziscws.hibernate.HibernateUtil;
+import com.ziscws.logger.MyLogger;
 import com.ziscws.util.JsonFactory;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Disjunction;
@@ -26,6 +30,7 @@ public class UsuarioDAO {
     private Criteria criteria;
     private Disjunction disjunction;
     private JsonFactory factory = new JsonFactory();
+    private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     public void beginTransaction() {
 
@@ -50,13 +55,13 @@ public class UsuarioDAO {
         criteria.add(Restrictions.eq("email", email));
         String json = factory.toJsonRestriction(criteria.uniqueResult(), restricao);
         session.close();
-
         return json;
 
     }
 
     /**
      * Busca usuario com base no ID
+     *
      * @param id
      * @return Usuario
      */
@@ -72,7 +77,8 @@ public class UsuarioDAO {
 
     /**
      * Faz a consulta usando Criteria se existe usuario com os dados passados,
-     * usa o restriction para bloquear a passagem de senha no retorno.
+     * usa o restriction para bloquear a passagem de senha no retorno. Tudo salvo
+     * em logs.
      *
      * @param email
      * @param password
@@ -80,12 +86,24 @@ public class UsuarioDAO {
      */
     public String login(String email, String password) {
 
+        try {
+            MyLogger.setup();
+        } catch (IOException ex) {
+            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
         beginTransaction();
+        LOGGER.setLevel(Level.INFO);
         criteria.add(Restrictions.eq("email", email));
         criteria.add(Restrictions.eq("senha", password));
 
-        String json = factory.toJsonRestriction((Usuario) criteria.uniqueResult(), "senha");
+        LOGGER.info("Login de usuario: " + email);
 
+        String json = factory.toJsonRestriction((Usuario) criteria.uniqueResult(), "senha");
+        if (json.contains("null")) {
+            LOGGER.info("Loggin não efetuado!");
+        }else{
+            LOGGER.info("Loggin efetuado com sucesso!");
+        }
         session.close();
         return json;
     }

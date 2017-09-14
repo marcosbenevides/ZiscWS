@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.hibernate.Criteria;
@@ -31,6 +32,17 @@ public class UsuarioDAO {
     private Disjunction disjunction;
     private JsonFactory factory = new JsonFactory();
     private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
+    /**
+     * Construtor inicia o Logger.
+     */
+    public UsuarioDAO() {
+        try {
+            MyLogger.setup();
+        } catch (IOException ex) {
+            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     public void beginTransaction() {
 
@@ -52,8 +64,14 @@ public class UsuarioDAO {
      */
     public String buscaUsuarioJson(String email, String restricao) {
         beginTransaction();
+        LOGGER.log(Level.INFO, "Inicia buscaUsuarioJson: {0}", email);
         criteria.add(Restrictions.eq("email", email));
         String json = factory.toJsonRestriction(criteria.uniqueResult(), restricao);
+        if (json.contains(null)) {
+            LOGGER.info("Usuario não encontrado");
+        } else {
+            LOGGER.info("Usuario encontrado");
+        }
         session.close();
         return json;
 
@@ -68,8 +86,10 @@ public class UsuarioDAO {
     public Usuario buscaUsuario(Long id) {
 
         beginTransaction();
+        LOGGER.log(Level.INFO, "Iniciando buscaUsuario: {0}", id);
         criteria.add(Restrictions.eq("id", id));
         Usuario usuario = new Usuario((Usuario) criteria.uniqueResult());
+        LOGGER.log(Level.INFO, "Resultado encontrado: {0}", usuario.getId());
         session.close();
         return usuario;
 
@@ -77,8 +97,8 @@ public class UsuarioDAO {
 
     /**
      * Faz a consulta usando Criteria se existe usuario com os dados passados,
-     * usa o restriction para bloquear a passagem de senha no retorno. Tudo salvo
-     * em logs.
+     * usa o restriction para bloquear a passagem de senha no retorno. Tudo
+     * salvo em logs.
      *
      * @param email
      * @param password
@@ -86,11 +106,6 @@ public class UsuarioDAO {
      */
     public String login(String email, String password) {
 
-        try {
-            MyLogger.setup();
-        } catch (IOException ex) {
-            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
         beginTransaction();
         LOGGER.setLevel(Level.INFO);
         criteria.add(Restrictions.eq("email", email));
@@ -101,7 +116,7 @@ public class UsuarioDAO {
         String json = factory.toJsonRestriction((Usuario) criteria.uniqueResult(), "senha");
         if (json.contains("null")) {
             LOGGER.info("Loggin não efetuado!");
-        }else{
+        } else {
             LOGGER.info("Loggin efetuado com sucesso!");
         }
         session.close();
@@ -119,9 +134,9 @@ public class UsuarioDAO {
 
         beginTransaction();
         criteria.add(Restrictions.eq("email", email));
-        Usuario usuario = (Usuario) criteria.uniqueResult();
+        List list = criteria.list();
         session.close();
-        return usuario != null;
+        return !list.isEmpty();
     }
 
     /**

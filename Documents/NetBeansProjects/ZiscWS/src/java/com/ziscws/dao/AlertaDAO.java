@@ -132,4 +132,13 @@ public class AlertaDAO {
 
         return dist <= 2000;
     }
+
+    public String todosAlertas() {
+        
+        beginTransaction();
+        List<Alerta> alerta = criteria.list();
+        String json = factory.toJsonRestriction(alerta, "senha");
+        session.close();
+        return json;
+    }
 }

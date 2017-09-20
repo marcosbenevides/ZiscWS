@@ -111,7 +111,7 @@ public class UsuarioDAO {
         criteria.add(Restrictions.eq("email", email));
         criteria.add(Restrictions.eq("senha", password));
 
-        LOGGER.info("Login de usuario: " + email);
+        LOGGER.log(Level.INFO, "Login de usuario: {0}", email);
 
         String json = factory.toJsonRestriction((Usuario) criteria.uniqueResult(), "senha");
         if (json.contains("null")) {

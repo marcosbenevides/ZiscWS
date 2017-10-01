@@ -5,17 +5,24 @@
  */
 package com.ziscws.requisicoes.consultas;
 
+import com.ziscws.dao.LogLoginDAO;
 import com.ziscws.dao.UsuarioDAO;
+import com.ziscws.entidades.LogLogin;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Date;
 import java.util.Base64;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  *
@@ -29,6 +36,7 @@ public class LoginCrip {
      *
      * @param email
      * @param password
+     * @param request
      * @return Dados não sensiveis do usuario logado ou vazio quando a
      * autenticação falha.
      * @throws NoSuchAlgorithmException
@@ -38,17 +46,24 @@ public class LoginCrip {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public String loginCrip(@FormParam("email") String email,
-            @FormParam("password") String password) throws NoSuchAlgorithmException, UnsupportedEncodingException, CloneNotSupportedException {
+    public Response loginCrip(@FormParam("email") String email,
+            @FormParam("password") String password,
+            @Context HttpServletRequest request) throws NoSuchAlgorithmException, UnsupportedEncodingException, CloneNotSupportedException {
 
         UsuarioDAO dao = new UsuarioDAO();
+        LogLoginDAO logDAO = new LogLoginDAO();
+
+        String ipAdress = request.getRemoteAddr();
+        String tipo = request.getHeader("User-Agent");
+        Date date = new Date(System.currentTimeMillis());
+
+        LogLogin log = new LogLogin(date, ipAdress, tipo);
 
         email = new String(Base64.getDecoder().decode(email));
         password = new String(Base64.getDecoder().decode(password));
 
         password = dao.md5Converte(password);
-
-        return dao.login(email, password);
+        return Response.ok(dao.login(email, password, log)).header("Access-Control-Allow-Origin", "*").build();
     }
 
 }

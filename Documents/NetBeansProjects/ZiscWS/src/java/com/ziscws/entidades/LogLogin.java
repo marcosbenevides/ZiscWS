@@ -51,9 +51,14 @@ public class LogLogin implements Serializable {
     @Column(name = "TIPO")
     private String tipo;
 
-    public LogLogin(long id, Usuario usuario, Date log, String ip, String tipo) {
-        this.id = id;
+    public LogLogin (Usuario usuario, Date log, String ip, String tipo) {
         this.usuario = usuario;
+        this.log = log;
+        this.ip = ip;
+        this.tipo = tipo;
+    }
+
+    public LogLogin(Date log, String ip, String tipo) {
         this.log = log;
         this.ip = ip;
         this.tipo = tipo;

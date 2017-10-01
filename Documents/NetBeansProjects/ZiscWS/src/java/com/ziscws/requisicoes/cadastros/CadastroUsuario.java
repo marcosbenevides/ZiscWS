@@ -44,3 +44,5 @@ public class CadastroUsuario {
         return dao.novoUsuario(usuario);
     }
 }
+
+

@@ -8,7 +8,6 @@ package com.ziscws.logger;
 import java.io.IOException;
 import java.util.logging.*;
 
-
 /**
  *
  * @author Avanti Premium
@@ -20,9 +19,11 @@ public class MyLogger {
 
     static private FileHandler fileHTML;
     static private Formatter formatterHTML;
+    static private int countSetup = 0;
 
     static public void setup() throws IOException {
 
+        countSetup++;
         // get the global logger to configure it
         Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
@@ -34,8 +35,8 @@ public class MyLogger {
         }
 
         logger.setLevel(Level.INFO);
-        fileTxt = new FileHandler("C:\\Log\\logLogging.txt");
-        fileHTML = new FileHandler("C:\\Log\\Logging.html");
+        fileTxt = new FileHandler("/web/log/log.txt");
+        fileHTML = new FileHandler("/web/log/log.html");
 
         // create a TXT formatter
         formatterTxt = new SimpleFormatter();
@@ -46,5 +47,9 @@ public class MyLogger {
         formatterHTML = new MyHtmlFormatter();
         fileHTML.setFormatter(formatterHTML);
         logger.addHandler(fileHTML);
+    }
+
+    public int getCountSetup() {
+        return countSetup;
     }
 }

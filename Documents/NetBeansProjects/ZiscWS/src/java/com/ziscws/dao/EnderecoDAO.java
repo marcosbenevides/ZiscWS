@@ -34,25 +34,25 @@ public class EnderecoDAO {
         criteria = session.createCriteria(Endereco.class);
 
     }
-    
-    public String buscaEnderecoUsuario(Usuario usuario){
-        
+
+    public String buscaEnderecoUsuario(Usuario usuario) {
+
         beginTransaction();
         criteria.add(Restrictions.eq("usuario", usuario));
-        List<Endereco> enderecos  =  criteria.list();
+        List<Endereco> enderecos = criteria.list();
         String json = factory.toJsonRestriction(enderecos, "senha");
         session.close();
         return json;
     }
-    
-    public String novoEndereco(Endereco endereco, Long idusuario){
-        
+
+    public String novoEndereco(Endereco endereco, Long idusuario) {
+
         beginTransaction();
-        Usuario usuario = (Usuario)session.load(Usuario.class, idusuario);
+        Usuario usuario = (Usuario) session.load(Usuario.class, idusuario);
         endereco.setUsuario(usuario);
         session.save(endereco);
         session.getTransaction().commit();
-        
+
         return buscaEnderecoUsuario(usuario);
     }
 

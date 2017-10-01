@@ -39,16 +39,16 @@ public class ConsultaEndereco {
         
     }
     
-    @GET
-    @Produces(MediaType.TEXT_HTML)
-    public String test(@Context HttpServletRequest httpheader){
-        
-        String ipAdress = httpheader.getRemoteAddr();
-        String tipo = httpheader.getHeader("User-Agent");
-        return "<html><body> "
-                + "<p>IP ->" + ipAdress + 
-                " <p>User-Agent ->" + tipo
-                + "</body></html>";
-    }
+//    @GET
+//    @Produces(MediaType.TEXT_HTML)
+//    public String test(@Context HttpServletRequest httpheader){
+//        
+//        String ipAdress = httpheader.getRemoteAddr();
+//        String tipo = httpheader.getHeader("User-Agent");
+//        return "<html><body> "
+//                + "<p>IP ->" + ipAdress + 
+//                " <p>User-Agent ->" + tipo
+//                + "</body></html>";
+//    }
     
 }

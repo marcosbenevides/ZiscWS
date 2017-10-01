@@ -19,8 +19,9 @@ import java.util.logging.LogRecord;
 public class MyHtmlFormatter extends Formatter {
 
     // this method is called for every log records
+    @Override
     public String format(LogRecord rec) {
-        StringBuffer buf = new StringBuffer(1000);
+        StringBuilder buf = new StringBuilder(1000);
         buf.append("<tr>\n");
 
         // colorize any levels >= WARNING in red
@@ -54,6 +55,7 @@ public class MyHtmlFormatter extends Formatter {
 
     // this method is called just after the handler using this
     // formatter is created
+    @Override
     public String getHead(Handler h) {
         return "<!DOCTYPE html>\n<head>\n<style>\n"
                 + "table { width: 100% }\n"
@@ -74,6 +76,7 @@ public class MyHtmlFormatter extends Formatter {
 
     // this method is called just after the handler using this
     // formatter is closed
+    @Override
     public String getTail(Handler h) {
         return "</table>\n</body>\n</html>";
     }

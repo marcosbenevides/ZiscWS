@@ -34,8 +34,8 @@ public class MyLogger {
         }
 
         logger.setLevel(Level.INFO);
-        fileTxt = new FileHandler("C:\\Log\\logLogging.txt");
-        fileHTML = new FileHandler("C:\\Log\\Logging.html");
+        fileTxt = new FileHandler("/web/log/logLogging.txt");
+        fileHTML = new FileHandler("/web/log/Logging.html");
 
         // create a TXT formatter
         formatterTxt = new SimpleFormatter();

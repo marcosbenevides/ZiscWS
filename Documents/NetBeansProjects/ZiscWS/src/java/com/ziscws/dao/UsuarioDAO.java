@@ -40,7 +40,7 @@ public class UsuarioDAO {
         try {
             MyLogger.setup();
         } catch (IOException ex) {
-            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UsuarioDAO.class.getName());
         }
     }
 
@@ -64,10 +64,10 @@ public class UsuarioDAO {
      */
     public String buscaUsuarioJson(String email, String restricao) {
         beginTransaction();
-        LOGGER.log(Level.INFO, "Inicia buscaUsuarioJson: {0}", email);
+        LOGGER.info("Inicia buscaUsuarioJson -> " + email);
         criteria.add(Restrictions.eq("email", email));
         String json = factory.toJsonRestriction(criteria.uniqueResult(), restricao);
-        if (json.contains(null)) {
+        if (json.contains("null")) {
             LOGGER.info("Usuario não encontrado");
         } else {
             LOGGER.info("Usuario encontrado");
@@ -86,10 +86,10 @@ public class UsuarioDAO {
     public Usuario buscaUsuario(Long id) {
 
         beginTransaction();
-        LOGGER.log(Level.INFO, "Iniciando buscaUsuario: {0}", id);
+        LOGGER.info("Iniciando buscaUsuario -> " + id);
         criteria.add(Restrictions.eq("id", id));
         Usuario usuario = new Usuario((Usuario) criteria.uniqueResult());
-        LOGGER.log(Level.INFO, "Resultado encontrado: {0}", usuario.getId());
+        LOGGER.info("Resultado encontrado: " + usuario.getId());
         session.close();
         return usuario;
 
@@ -111,7 +111,7 @@ public class UsuarioDAO {
         criteria.add(Restrictions.eq("email", email));
         criteria.add(Restrictions.eq("senha", password));
 
-        LOGGER.log(Level.INFO, "Login de usuario: {0}", email);
+        LOGGER.info("Login de usuario -> " + email);
 
         String json = factory.toJsonRestriction((Usuario) criteria.uniqueResult(), "senha");
         if (json.contains("null")) {
@@ -150,6 +150,7 @@ public class UsuarioDAO {
 
         session.saveOrUpdate(usuario);
         session.getTransaction().commit();
+        session.close();
 
         return buscaUsuarioJson(usuario.getEmail(), "senha");
     }

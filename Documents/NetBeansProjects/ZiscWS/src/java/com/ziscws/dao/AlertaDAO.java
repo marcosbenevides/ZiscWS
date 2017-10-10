@@ -51,8 +51,6 @@ public class AlertaDAO {
      */
     public String novoAlerta(Alerta alerta, Long usuario) {
         beginTransaction();
-        LOGGER.setLevel(Level.INFO);
-        LOGGER.info("Gravando novo Alerta em usuario do ID -> " + usuario);
         Usuario user = (Usuario) session.load(Usuario.class, usuario);
         alerta.setUsuario(user);
         session.saveOrUpdate(alerta);

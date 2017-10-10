@@ -59,14 +59,8 @@ public class UsuarioDAO {
      */
     public String buscaUsuarioJson(String email, String restricao) {
         beginTransaction();
-        LOGGER.info("Inicia buscaUsuarioJson -> " + email);
         criteria.add(Restrictions.eq("email", email));
         String json = factory.toJsonRestriction(criteria.uniqueResult(), restricao);
-        if (json.contains("null")) {
-            LOGGER.info("Usuario não encontrado");
-        } else {
-            LOGGER.info("Usuario encontrado");
-        }
         session.close();
         return json;
 
@@ -81,10 +75,8 @@ public class UsuarioDAO {
     public Usuario buscaUsuario(Long id) {
 
         beginTransaction();
-        LOGGER.info("Iniciando buscaUsuario -> " + id);
         criteria.add(Restrictions.eq("id", id));
         Usuario usuario = new Usuario((Usuario) criteria.uniqueResult());
-        LOGGER.info("Resultado encontrado: " + usuario.getId());
         session.close();
         return usuario;
 
@@ -104,11 +96,8 @@ public class UsuarioDAO {
 
         beginTransaction();
         LogLoginDAO logDAO = new LogLoginDAO();
-        LOGGER.setLevel(Level.INFO);
         criteria.add(Restrictions.eq("email", email));
         criteria.add(Restrictions.eq("senha", password));
-
-        LOGGER.info("Login de usuario -> " + email);
 
         String json = factory.toJsonRestriction((Usuario) criteria.uniqueResult(), "senha");
         if (json.contains("null")) {

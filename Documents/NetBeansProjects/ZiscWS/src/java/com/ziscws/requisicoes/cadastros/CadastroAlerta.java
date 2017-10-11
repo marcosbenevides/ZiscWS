@@ -68,7 +68,6 @@ public class CadastroAlerta {
                         "origin, content-type, accept, authorization")
                 .header("Access-Control-Allow-Methods",
                         "GET, POST, PUT, DELETE, OPTIONS, HEAD")
-                .entity("")
                 .build();
     }
 

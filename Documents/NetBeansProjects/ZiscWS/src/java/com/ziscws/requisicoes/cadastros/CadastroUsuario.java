@@ -45,7 +45,6 @@ public class CadastroUsuario {
                             "origin, content-type, accept, authorization")
                     .header("Access-Control-Allow-Methods",
                             "GET, POST, PUT, DELETE, OPTIONS, HEAD")
-                    .entity("")
                     .build();
         }
         String senhaCrip = dao.md5Converte(senha);
@@ -58,7 +57,6 @@ public class CadastroUsuario {
                         "origin, content-type, accept, authorization")
                 .header("Access-Control-Allow-Methods",
                         "GET, POST, PUT, DELETE, OPTIONS, HEAD")
-                .entity("")
                 .build();
     }
 }

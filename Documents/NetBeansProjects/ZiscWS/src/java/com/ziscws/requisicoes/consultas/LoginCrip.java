@@ -63,7 +63,15 @@ public class LoginCrip {
         password = new String(Base64.getDecoder().decode(password));
 
         password = dao.md5Converte(password);
-        return Response.ok(dao.login(email, password, log)).header("Access-Control-Allow-Origin", "*").build();
+        return Response
+                .ok(dao.login(email, password, log))
+                .header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Credentials", "true")
+                .header("Access-Control-Allow-Headers",
+                        "origin, content-type, accept, authorization")
+                .header("Access-Control-Allow-Methods",
+                        "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+                .entity("").build();
     }
 
 }

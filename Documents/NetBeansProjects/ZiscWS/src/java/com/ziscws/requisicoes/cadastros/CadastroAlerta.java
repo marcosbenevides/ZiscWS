@@ -18,6 +18,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  *
@@ -44,7 +45,7 @@ public class CadastroAlerta {
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
-    public String novoAlerta(@FormParam("id") String idusuario,
+    public Response novoAlerta(@FormParam("id") String idusuario,
             @FormParam("logHora") Date logHora,
             @FormParam("longitude") String longitude,
             @FormParam("latitude") String latitude,
@@ -58,7 +59,17 @@ public class CadastroAlerta {
         AlertaDAO daoA = new AlertaDAO();
         Alerta alerta = new Alerta(logHora, longitude, latitude, bairro,
                 cidade, estado, observacao, tipo, ePositivo, true);
-        return daoA.novoAlerta(alerta, new Long(idusuario));
+        
+        return Response
+                .ok(daoA.novoAlerta(alerta, new Long(idusuario)))
+                .header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Credentials", "true")
+                .header("Access-Control-Allow-Headers",
+                        "origin, content-type, accept, authorization")
+                .header("Access-Control-Allow-Methods",
+                        "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+                .entity("")
+                .build();
     }
 
 }

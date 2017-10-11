@@ -15,6 +15,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  *
@@ -26,7 +27,7 @@ public class CadastroUsuario {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public String cadastrar(@FormParam("nome") String nome,
+    public Response cadastrar(@FormParam("nome") String nome,
             @FormParam("email") String email,
             @FormParam("cpf") String cpf,
             @FormParam("celular") String celular,
@@ -36,13 +37,28 @@ public class CadastroUsuario {
         UsuarioDAO dao = new UsuarioDAO();
         Usuario usuario;
         if (dao.usuarioCadastrado(email)) {
-            String json = gson.toJson("Email já cadastrado!");
-            return json;
+            return Response
+                    .ok(gson.toJson("Email já cadastrado!"))
+                    .header("Access-Control-Allow-Origin", "*")
+                    .header("Access-Control-Allow-Credentials", "true")
+                    .header("Access-Control-Allow-Headers",
+                            "origin, content-type, accept, authorization")
+                    .header("Access-Control-Allow-Methods",
+                            "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+                    .entity("")
+                    .build();
         }
         String senhaCrip = dao.md5Converte(senha);
         usuario = new Usuario(nome, email, cpf, celular, senhaCrip);
-        return dao.novoUsuario(usuario);
+        return Response
+                .ok(dao.novoUsuario(usuario))
+                .header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Credentials", "true")
+                .header("Access-Control-Allow-Headers",
+                        "origin, content-type, accept, authorization")
+                .header("Access-Control-Allow-Methods",
+                        "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+                .entity("")
+                .build();
     }
 }
-
-

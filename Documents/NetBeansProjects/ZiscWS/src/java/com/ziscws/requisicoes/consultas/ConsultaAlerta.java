@@ -34,20 +34,41 @@ public class ConsultaAlerta {
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
-    public String getAlerta(
+    public Response getAlerta(
             @FormParam("latitude") String latitude,
             @FormParam("longitude") String longitude) {
 
         AlertaDAO dao = new AlertaDAO();
 
-        return dao.buscaPorLocal(longitude, latitude);
+        return Response.
+                ok(dao.buscaPorLocal(longitude, latitude))
+                .header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Credentials", "true")
+                .header("Access-Control-Allow-Headers",
+                        "origin, content-type, accept, authorization")
+                .header("Access-Control-Allow-Methods",
+                        "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+                .entity("")
+                .build();
     }
 
+    /**
+     * Consulta todos os alertas criados
+     * @return
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response todosAlertas() {
         AlertaDAO dao = new AlertaDAO();
-        String json = dao.todosAlertas();
-        return Response.ok(json).header("Access-Control-Allow-Origin", "*").build();
+        return Response
+                .ok(dao.todosAlertas())
+                .header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Credentials", "true")
+                .header("Access-Control-Allow-Headers",
+                        "origin, content-type, accept, authorization")
+                .header("Access-Control-Allow-Methods",
+                        "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+                .entity("")
+                .build();
     }
 }

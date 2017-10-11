@@ -26,29 +26,24 @@ import javax.ws.rs.core.Response;
  */
 @Path("/consultaendereco/")
 public class ConsultaEndereco {
-    
+
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
-    public String bucaEndereco(@FormParam("id") String idusuario){
-        
+    public Response bucaEndereco(@FormParam("id") String idusuario) {
+
         EnderecoDAO dao = new EnderecoDAO();
         UsuarioDAO udao = new UsuarioDAO();
-        
-        return dao.buscaEnderecoUsuario(udao.buscaUsuario(new Long(idusuario)));
-        
+
+        return Response
+                .ok(dao.buscaEnderecoUsuario(udao.buscaUsuario(new Long(idusuario))))
+                .header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Credentials", "true")
+                .header("Access-Control-Allow-Headers",
+                        "origin, content-type, accept, authorization")
+                .header("Access-Control-Allow-Methods",
+                        "GET, POST, PUT, DELETE, OPTIONS, HEAD")
+                .entity("")
+                .build();
     }
-    
-    @GET
-    @Produces(MediaType.TEXT_HTML)
-    public String test(@Context HttpServletRequest httpheader){
-        
-        String ipAdress = httpheader.getRemoteAddr();
-        String tipo = httpheader.getHeader("User-Agent");
-        return "<html><body> "
-                + "<p>IP ->" + ipAdress + 
-                " <p>User-Agent ->" + tipo
-                + "</body></html>";
-    }
-    
 }

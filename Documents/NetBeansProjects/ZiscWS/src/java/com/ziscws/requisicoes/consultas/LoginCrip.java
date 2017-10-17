@@ -9,14 +9,12 @@ import com.ziscws.dao.LogLoginDAO;
 import com.ziscws.dao.UsuarioDAO;
 import com.ziscws.entidades.LogLogin;
 import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Date;
 import java.util.Base64;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -52,7 +50,9 @@ public class LoginCrip {
 
         UsuarioDAO dao = new UsuarioDAO();
         LogLoginDAO logDAO = new LogLoginDAO();
-
+        /*
+        *Captando as informações para o Loglogin
+         */
         String ipAdress = request.getRemoteAddr();
         String tipo = request.getHeader("User-Agent");
         Date date = new Date(System.currentTimeMillis());

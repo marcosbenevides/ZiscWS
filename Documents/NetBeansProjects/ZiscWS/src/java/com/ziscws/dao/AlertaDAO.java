@@ -80,8 +80,6 @@ public class AlertaDAO {
         List<Alerta> listaCompleta = (List<Alerta>) criteria.list();
         List<Alerta> listaNova = new ArrayList<>();
 
-        LOGGER.setLevel(Level.INFO);
-        LOGGER.info("Buscando alerta próximos a Lat -> " + latitude + " Lng -> " + longitude);
         for (int i = 0; i < listaCompleta.size(); i++) {
             if (distancia2Pontos(listaCompleta.get(i).getLatitude(),
                     listaCompleta.get(i).getLongitude(),
@@ -90,7 +88,7 @@ public class AlertaDAO {
                 listaNova.add(listaCompleta.get(i));
             }
         }
-        LOGGER.info("Encontrado " + listaNova.size() + " alertas próximos.");
+        
         String json = factory.toJsonRestriction(listaNova, "senha");
         session.close();
         return json;
@@ -172,7 +170,6 @@ public class AlertaDAO {
         beginTransaction();
         List<Alerta> alerta = criteria.list();
         String json = factory.toJsonRestriction(alerta, "senha");
-        LOGGER.info(alerta.size() + " alertas foram encontrados todosAlertas");
         session.close();
         return json;
     }

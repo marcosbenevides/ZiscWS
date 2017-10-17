@@ -53,5 +53,6 @@ Contributor(s):
     <mapping class="com.ziscws.entidades.Endereco"/>
     <mapping class="com.ziscws.entidades.Alerta"/>
     <mapping class="com.ziscws.entidades.LogLogin"/>
+    <mapping class="com.ziscws.entidades.DptoPolicia"/>
   </session-factory>
 </hibernate-configuration>

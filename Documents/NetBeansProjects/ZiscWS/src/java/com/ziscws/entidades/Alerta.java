@@ -7,6 +7,7 @@ package com.ziscws.entidades;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.sql.Timestamp;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -41,9 +42,9 @@ public class Alerta implements Serializable {
     @Cascade(CascadeType.ALL)
     private Usuario usuario;
 
-    @Type(type = "date")
+    @Type(type = "timestamp")
     @Column(name = "LOG_HORA")
-    private Date logHora;
+    private Timestamp logHora;
 
     @Column(name = "LONGITUDE", length = 80, nullable = false)
     private String longitude;
@@ -64,7 +65,7 @@ public class Alerta implements Serializable {
     @Column(name = "ATIVO", nullable = false)
     private Boolean ativo;
 
-    public Alerta(Date logHora, String longitude, String latitude, String bairro, String cidade, String estado, String observacao, String tipo, Boolean ePositivo, Boolean ativo) {
+    public Alerta(Timestamp logHora, String longitude, String latitude, String bairro, String cidade, String estado, String observacao, String tipo, Boolean ePositivo, Boolean ativo) {
         this.logHora = logHora;
         this.longitude = longitude;
         this.latitude = latitude;
@@ -97,10 +98,11 @@ public class Alerta implements Serializable {
     }
 
     public Date getLogHora() {
-        return logHora;
+        
+        return new Date(logHora.getTime());
     }
 
-    public void setLogHora(Date logHora) {
+    public void setLogHora(Timestamp logHora) {
         this.logHora = logHora;
     }
 

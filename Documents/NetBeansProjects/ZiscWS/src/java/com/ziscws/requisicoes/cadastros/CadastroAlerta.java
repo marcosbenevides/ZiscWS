@@ -8,6 +8,7 @@ package com.ziscws.requisicoes.cadastros;
 import com.ziscws.dao.AlertaDAO;
 import com.ziscws.entidades.Alerta;
 import java.sql.Timestamp;
+import java.util.Date;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -42,7 +43,7 @@ public class CadastroAlerta {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response novoAlerta(@FormParam("id") String idusuario,
-            @FormParam("logHora") Timestamp logHora,
+            @FormParam("logHora") Date logHora,
             @FormParam("longitude") String longitude,
             @FormParam("latitude") String latitude,
             @FormParam("bairro") String bairro,

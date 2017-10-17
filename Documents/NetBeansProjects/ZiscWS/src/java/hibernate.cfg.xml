@@ -54,5 +54,6 @@ Contributor(s):
     <mapping class="com.ziscws.entidades.Alerta"/>
     <mapping class="com.ziscws.entidades.LogLogin"/>
     <mapping class="com.ziscws.entidades.DptoPolicia"/>
+    <mapping class="com.ziscws.entidades.CallHandler"/>
   </session-factory>
 </hibernate-configuration>

@@ -12,7 +12,6 @@ import com.ziscws.entidades.CallHandler;
 import com.ziscws.entidades.Usuario;
 import java.util.Date;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -23,12 +22,23 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
- *
+ * Classe para gerencia de chamadas efetuadas pelo cliente no android e disponibilizada
+ * para o dashboard da policia
  * @author Avanti Premium
  */
 @Path("/callhandler/")
 public class NewCallHandler {
 
+    /**
+     * Cria um registro de chamada no banco de dados.
+     * @param id_usuario
+     * @param latitude
+     * @param longitude
+     * @param cidade
+     * @param bairro
+     * @param estado
+     * @return call completa.
+     */
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
@@ -59,6 +69,10 @@ public class NewCallHandler {
                 .build();
     }
 
+    /**
+     * Função para processar todas as calls ativas
+     * @return lista de calls ativas
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getCalls() {
@@ -76,6 +90,11 @@ public class NewCallHandler {
                 .build();
     }
 
+    /**
+     * Chama função para alterar o status da call para inativa
+     * @param id_call
+     * @return call modificada
+     */
     @PUT
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)

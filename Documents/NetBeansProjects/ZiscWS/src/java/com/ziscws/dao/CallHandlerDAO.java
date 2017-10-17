@@ -16,7 +16,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
 /**
- *
+ * Classe responsavel por gerir as funções da classe CallHandler
  * @author Avanti Premium
  */
 public class CallHandlerDAO {
@@ -33,6 +33,11 @@ public class CallHandlerDAO {
 
     }
 
+    /**
+     * Cria um novo CallHandler no banco de dados
+     * @param callHandler
+     * @return call criado.
+     */
     public String setCallHandler(CallHandler callHandler) {
         beginTransaction();
         session.saveOrUpdate(callHandler);
@@ -41,6 +46,10 @@ public class CallHandlerDAO {
         return factory.toJsonRestriction(callHandler, "senha");
     }
 
+    /**
+     * Busca todas as calls com status ativo
+     * @return lista de calls
+     */
     public String getCall() {
         beginTransaction();
         criteria.add(Restrictions.eq("ativo", true));
@@ -51,6 +60,11 @@ public class CallHandlerDAO {
         return json;
     }
 
+    /**
+     * Busca call de acordo com o parametro passado.
+     * @param id
+     * @return call
+     */
     public String getCall(Long id) {
         Gson gson = new Gson();
         beginTransaction();

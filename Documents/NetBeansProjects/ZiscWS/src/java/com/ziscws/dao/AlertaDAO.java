@@ -15,7 +15,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 
 /**
@@ -24,22 +26,13 @@ import org.hibernate.criterion.Restrictions;
  * @author Avanti Premium
  */
 public class AlertaDAO {
-
+    
     private Session session;
     private Criteria criteria;
     private final JsonFactory factory = new JsonFactory();
     private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-
+    
     public AlertaDAO() {
-
-    }
-
-    public void beginTransaction() {
-
-        session = HibernateUtil.getSessionFactory().getCurrentSession();
-        session.beginTransaction();
-        criteria = session.createCriteria(Alerta.class);
-
     }
 
     /**
@@ -50,19 +43,33 @@ public class AlertaDAO {
      * @return Json do alerta
      */
     public String novoAlerta(Alerta alerta, Long usuario) {
-        beginTransaction();
-        Usuario user = (Usuario) session.load(Usuario.class, usuario);
-        alerta.setUsuario(user);
-        session.saveOrUpdate(alerta);
-        session.getTransaction().commit();
-
-        String json = buscaAlertaID(alerta.getId());
-        if (json.contains(null)) {
-            LOGGER.setLevel(Level.SEVERE);
-            LOGGER.info("Aconteceu algum erro, Alerta não criado! Checar Log do servidor.");
-        } else {
-            LOGGER.setLevel(Level.INFO);
-            LOGGER.info("Alerta criado -> " + new Date());
+        session = HibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        String json = null;
+        try {
+            tx = session.beginTransaction();
+            criteria = session.createCriteria(Alerta.class);
+            tx.setTimeout(5);
+            Usuario user = (Usuario) session.load(Usuario.class, usuario);
+            alerta.setUsuario(user);
+            session.saveOrUpdate(alerta);
+            tx.commit();
+            json = buscaAlertaID(alerta.getId());
+            if (json.contains(null)) {
+                LOGGER.setLevel(Level.SEVERE);
+                LOGGER.info("Aconteceu algum erro, Alerta não criado! Checar Log do servidor.");
+            } else {
+                LOGGER.setLevel(Level.INFO);
+                LOGGER.log(Level.INFO, "Alerta criado -> {0}", new Date());
+            }
+        } catch (HibernateException ex) {
+            try {
+                tx.rollback();
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+            }
+        } finally {
+            session.close();
         }
         return json;
     }
@@ -75,22 +82,38 @@ public class AlertaDAO {
      * @return Lista de Alertas que estão dentro de um raio de 2KM
      */
     public String buscaPorLocal(String longitude, String latitude) {
-
-        beginTransaction();
-        List<Alerta> listaCompleta = (List<Alerta>) criteria.list();
-        List<Alerta> listaNova = new ArrayList<>();
-
-        for (int i = 0; i < listaCompleta.size(); i++) {
-            if (distancia2Pontos(listaCompleta.get(i).getLatitude(),
-                    listaCompleta.get(i).getLongitude(),
-                    latitude,
-                    longitude)) {
-                listaNova.add(listaCompleta.get(i));
+        session = HibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        String json = null;
+        
+        try {
+            tx = session.beginTransaction();
+            criteria = session.createCriteria(Alerta.class);
+            tx.setTimeout(5);
+            
+            List<Alerta> listaCompleta = (List<Alerta>) criteria.list();
+            List<Alerta> listaNova = new ArrayList<>();
+            
+            for (int i = 0; i < listaCompleta.size(); i++) {
+                if (distancia2Pontos(listaCompleta.get(i).getLatitude(),
+                        listaCompleta.get(i).getLongitude(),
+                        latitude,
+                        longitude)) {
+                    listaNova.add(listaCompleta.get(i));
+                }
             }
+            json = factory.toJsonRestriction(listaNova, "senha");
+            tx.commit();
+        } catch (HibernateException ex) {
+            try {
+                tx.rollback();
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+            }
+        } finally {
+            session.close();
         }
         
-        String json = factory.toJsonRestriction(listaNova, "senha");
-        session.close();
         return json;
     }
 
@@ -101,18 +124,34 @@ public class AlertaDAO {
      * @return String Json
      */
     public String buscaAlertaID(Long id) {
-        beginTransaction();
-        LOGGER.setLevel(Level.INFO);
-        LOGGER.info("Iniciando buscaAlertaID ->" + id);
-        criteria.add(Restrictions.eq("id", id));
-        String json = factory.toJsonRestriction(criteria.uniqueResult(), "senha");
-        session.close();
-
-        if (json.contains(null)) {
-            LOGGER.info("Alerta do id " + id + " não foi encontrado.");
-        } else {
-            LOGGER.info("Alerta do id " + id + " encontrado.");
+        session = HibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        String json = null;
+        
+        try {
+            tx = session.beginTransaction();
+            criteria = session.createCriteria(Alerta.class);
+            tx.setTimeout(5);
+            criteria.add(Restrictions.eq("id", id));
+            json = factory.toJsonRestriction(criteria.uniqueResult(), "senha");
+            
+            if (json.contains(null)) {
+                LOGGER.log(Level.INFO, "Alerta do id {0} n\u00e3o foi encontrado.", id);
+            } else {
+                LOGGER.log(Level.INFO, "Alerta do id {0} encontrado.", id);
+            }
+            tx.commit();
+            
+        } catch (HibernateException ex) {
+            try {
+                tx.rollback();
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+            }
+        } finally {
+            session.close();
         }
+        
         return json;
     }
 
@@ -123,19 +162,34 @@ public class AlertaDAO {
      * @return String Json com os Alertas
      */
     public String buscaAlertaUsuario(Usuario usuario) {
-        beginTransaction();
-        LOGGER.setLevel(Level.INFO);
-        LOGGER.info("Iniciado buscaAlertaUsuario -> " + usuario.getId());
-        criteria.add(Restrictions.eq("usuario", usuario));
-        List<Alerta> alertas = criteria.list();
-        String json = factory.toJsonRestriction(alertas, "senha");
-        if (json.contains(null)) {
-            LOGGER.info("Alertas do usuario -> " + usuario.getId() + " não foram encontrados!");
-        } else {
-            LOGGER.info("Foram encontrados -> " + alertas.size() + " alertas para o usuario -> " + usuario.getId());
+        session = HibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        String json = null;
+        
+        try {
+            tx = session.beginTransaction();
+            criteria = session.createCriteria(Alerta.class);
+            tx.setTimeout(5);
+            criteria.add(Restrictions.eq("usuario", usuario));
+            List<Alerta> alertas = criteria.list();
+            json = factory.toJsonRestriction(alertas, "senha");
+            if (json.contains(null)) {
+                LOGGER.log(Level.INFO, "Alertas do usuario -> {0} n\u00e3o foram encontrados!", usuario.getId());
+            } else {
+                LOGGER.log(Level.INFO, "Foram encontrados -> {0} alertas para o usuario -> {1}", new Object[]{alertas.size(), usuario.getId()});
+            }
+            tx.commit();
+            
+        } catch (HibernateException ex) {
+            try {
+                tx.rollback();
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+            }
+        } finally {
+            session.close();
         }
-        session.close();
-
+        
         return json;
     }
 
@@ -150,7 +204,7 @@ public class AlertaDAO {
      * @return True caso os pontos estão em uma distancia menor que 2 KM
      */
     public Boolean distancia2Pontos(String latA, String longA, String latB, String longB) {
-
+        
         double earthRadius = 6371;//kilometers
         double dLat = Math.toRadians(Double.parseDouble(latB) - Double.parseDouble(latA));
         double dLng = Math.toRadians(Double.parseDouble(longB) - Double.parseDouble(longA));
@@ -161,16 +215,33 @@ public class AlertaDAO {
                 * Math.cos(Math.toRadians(Double.parseDouble(latB)));
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         double dist = (earthRadius * c) * 1000;
-
+        
         return dist <= 2000;
     }
-
+    
     public String todosAlertas() {
-
-        beginTransaction();
-        List<Alerta> alerta = criteria.list();
-        String json = factory.toJsonRestriction(alerta, "senha");
-        session.close();
+        session = HibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        String json = null;
+        
+        try {
+            tx = session.beginTransaction();
+            tx.setTimeout(5);
+            criteria = session.createCriteria(Alerta.class);
+            
+            List<Alerta> alerta = criteria.list();
+            json = factory.toJsonRestriction(alerta, "senha");
+            
+            tx.commit();
+        } catch (HibernateException ex) {
+            try {
+                tx.rollback();
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+            }
+        } finally {
+            session.close();
+        }
         return json;
     }
 }

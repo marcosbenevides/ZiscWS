@@ -13,10 +13,11 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Restrictions;
 
@@ -39,15 +40,6 @@ public class UsuarioDAO {
 
     }
 
-    public void beginTransaction() {
-
-        session = HibernateUtil.getSessionFactory().getCurrentSession();
-        disjunction = Restrictions.disjunction();
-        session.beginTransaction();
-        criteria = session.createCriteria(Usuario.class);
-
-    }
-
     /**
      * Busca um usuario de acordo com uma dos parametros (email, cpf ou id) e
      * uma String Json com a restrição escolhida, em caso de não haver
@@ -58,10 +50,28 @@ public class UsuarioDAO {
      * @return Json String
      */
     public String buscaUsuarioJson(String email, String restricao) {
-        beginTransaction();
-        criteria.add(Restrictions.eq("email", email));
-        String json = factory.toJsonRestriction(criteria.uniqueResult(), restricao);
-        session.close();
+
+        session = HibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        String json = null;
+
+        try {
+            tx = session.beginTransaction();
+            criteria = session.createCriteria(Usuario.class);
+            tx.setTimeout(5);
+            criteria.add(Restrictions.eq("email", email));
+            json = factory.toJsonRestriction(criteria.uniqueResult(), restricao);
+            tx.commit();
+        } catch (HibernateException ex) {
+            try {
+                tx.rollback();
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+            }
+        } finally {
+            session.close();
+        }
+
         return json;
 
     }
@@ -74,10 +84,28 @@ public class UsuarioDAO {
      */
     public Usuario buscaUsuario(Long id) {
 
-        beginTransaction();
-        criteria.add(Restrictions.eq("id", id));
-        Usuario usuario = new Usuario((Usuario) criteria.uniqueResult());
-        session.close();
+        session = HibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        String json = null;
+        Usuario usuario = null;
+        try {
+            tx = session.beginTransaction();
+            criteria = session.createCriteria(Usuario.class);
+            tx.setTimeout(5);
+
+            criteria.add(Restrictions.eq("id", id));
+            usuario = new Usuario((Usuario) criteria.uniqueResult());
+            tx.commit();
+        } catch (HibernateException ex) {
+            try {
+                tx.rollback();
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+            }
+        } finally {
+            session.close();
+        }
+
         return usuario;
 
     }
@@ -94,21 +122,39 @@ public class UsuarioDAO {
      */
     public String login(String email, String password, LogLogin log) {
 
-        beginTransaction();
-        LogLoginDAO logDAO = new LogLoginDAO();
-        criteria.add(Restrictions.eq("email", email));
-        criteria.add(Restrictions.eq("senha", password));
+        session = HibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        String json = null;
 
-        String json = factory.toJsonRestriction((Usuario) criteria.uniqueResult(), "senha");
-        if (json.contains("null")) {
-            LOGGER.info("Loggin não efetuado!");
+        try {
+            tx = session.beginTransaction();
+            criteria = session.createCriteria(Usuario.class);
+            tx.setTimeout(5);
+            LogLoginDAO logDAO = new LogLoginDAO();
+            criteria.add(Restrictions.eq("email", email));
+            criteria.add(Restrictions.eq("senha", password));
+
+            json = factory.toJsonRestriction((Usuario) criteria.uniqueResult(), "senha");
+            if (json.contains("null")) {
+                LOGGER.info("Loggin não efetuado!");
+                tx.commit();
+            } else {
+                LOGGER.info("Loggin efetuado com sucesso!");
+                log.setUsuario((Usuario) criteria.uniqueResult());
+                tx.commit();
+                logDAO.novoLog(log);
+            }
+
+        } catch (HibernateException ex) {
+            try {
+                tx.rollback();
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+            }
+        } finally {
             session.close();
-        } else {
-            LOGGER.info("Loggin efetuado com sucesso!");
-            log.setUsuario((Usuario) criteria.uniqueResult());
-            session.close();
-            logDAO.novoLog(log);
         }
+
         return json;
     }
 
@@ -121,10 +167,26 @@ public class UsuarioDAO {
      */
     public boolean usuarioCadastrado(String email) {
 
-        beginTransaction();
-        criteria.add(Restrictions.eq("email", email));
-        List list = criteria.list();
-        session.close();
+        session = HibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        List list = null;
+        try {
+            tx = session.beginTransaction();
+            criteria = session.createCriteria(Usuario.class);
+            tx.setTimeout(5);
+            criteria.add(Restrictions.eq("email", email));
+            list = criteria.list();
+            tx.commit();
+        } catch (HibernateException ex) {
+            try {
+                tx.rollback();
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+            }
+        } finally {
+            session.close();
+        }
+
         return !list.isEmpty();
     }
 
@@ -135,11 +197,25 @@ public class UsuarioDAO {
      * @return usuario cadastrado.
      */
     public String novoUsuario(Usuario usuario) {
-        beginTransaction();
 
-        session.saveOrUpdate(usuario);
-        session.getTransaction().commit();
-        session.close();
+        session = HibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        String json = null;
+
+        try {
+            tx = session.beginTransaction();
+            tx.setTimeout(5);
+            session.saveOrUpdate(usuario);
+            tx.commit();
+        } catch (HibernateException ex) {
+            try {
+                tx.rollback();
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+            }
+        } finally {
+            session.close();
+        }
 
         return buscaUsuarioJson(usuario.getEmail(), "senha");
     }

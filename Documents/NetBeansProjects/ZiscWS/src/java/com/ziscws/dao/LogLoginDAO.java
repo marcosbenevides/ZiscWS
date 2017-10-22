@@ -5,10 +5,12 @@
  */
 package com.ziscws.dao;
 
+import com.google.gson.Gson;
 import com.ziscws.entidades.LogLogin;
 import com.ziscws.hibernate.HibernateUtil;
 import com.ziscws.util.JsonFactory;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -26,6 +28,7 @@ public class LogLoginDAO {
     private Criteria criteria;
     private final JsonFactory factory = new JsonFactory();
     private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    Gson gson = new Gson();
 
     public String getHistorico(Long id) {
 
@@ -43,9 +46,12 @@ public class LogLoginDAO {
             tx.commit();
         } catch (HibernateException ex) {
             try {
-                tx.rollback();
+                if (tx != null) {
+                    tx.rollback();
+                }
+                json = gson.toJson(ex);
             } catch (RuntimeException e) {
-                e.printStackTrace();
+                json += gson.toJson(e);
             }
         } finally {
             session.close();
@@ -69,9 +75,12 @@ public class LogLoginDAO {
             tx.commit();
         } catch (HibernateException ex) {
             try {
-                tx.rollback();
+                if (tx != null) {
+                    tx.rollback();
+                }
+                json = gson.toJson(ex);
             } catch (RuntimeException e) {
-                e.printStackTrace();
+                json += gson.toJson(e);
             }
         } finally {
             session.close();
@@ -93,9 +102,11 @@ public class LogLoginDAO {
             tx.commit();
         } catch (HibernateException ex) {
             try {
-                tx.rollback();
+                if (tx != null) {
+                    tx.rollback();
+                }
             } catch (RuntimeException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.WARNING, "Ocorreu um erro ao gravar o log {0}", e.toString());
             }
         } finally {
             session.close();

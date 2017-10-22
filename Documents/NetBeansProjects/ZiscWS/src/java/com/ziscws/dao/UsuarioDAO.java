@@ -5,6 +5,7 @@
  */
 package com.ziscws.dao;
 
+import com.google.gson.Gson;
 import com.ziscws.entidades.LogLogin;
 import com.ziscws.entidades.Usuario;
 import com.ziscws.hibernate.HibernateUtil;
@@ -27,6 +28,7 @@ import org.hibernate.criterion.Restrictions;
  */
 public class UsuarioDAO {
 
+    private Gson gson = new Gson();
     private Session session;
     private Criteria criteria;
     private Disjunction disjunction;
@@ -64,9 +66,12 @@ public class UsuarioDAO {
             tx.commit();
         } catch (HibernateException ex) {
             try {
-                tx.rollback();
+                if (tx != null) {
+                    tx.rollback();
+                }
+                json = gson.toJson(ex);
             } catch (RuntimeException e) {
-                e.printStackTrace();
+                json += gson.toJson(e);
             }
         } finally {
             session.close();
@@ -98,9 +103,12 @@ public class UsuarioDAO {
             tx.commit();
         } catch (HibernateException ex) {
             try {
-                tx.rollback();
+                if (tx != null) {
+                    tx.rollback();
+                }
+                json = gson.toJson(ex);
             } catch (RuntimeException e) {
-                e.printStackTrace();
+                json += gson.toJson(e);
             }
         } finally {
             session.close();
@@ -147,9 +155,12 @@ public class UsuarioDAO {
 
         } catch (HibernateException ex) {
             try {
-                tx.rollback();
+                if (tx != null) {
+                    tx.rollback();
+                }
+                json = gson.toJson(ex);
             } catch (RuntimeException e) {
-                e.printStackTrace();
+                json += gson.toJson(e);
             }
         } finally {
             session.close();
@@ -179,7 +190,9 @@ public class UsuarioDAO {
             tx.commit();
         } catch (HibernateException ex) {
             try {
-                tx.rollback();
+                if (tx != null) {
+                    tx.rollback();
+                }
             } catch (RuntimeException e) {
                 e.printStackTrace();
             }
@@ -209,7 +222,9 @@ public class UsuarioDAO {
             tx.commit();
         } catch (HibernateException ex) {
             try {
-                tx.rollback();
+                if (tx != null) {
+                    tx.rollback();
+                }
             } catch (RuntimeException e) {
                 e.printStackTrace();
             }

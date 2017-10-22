@@ -5,6 +5,7 @@
  */
 package com.ziscws.dao;
 
+import com.google.gson.Gson;
 import com.ziscws.entidades.Alerta;
 import com.ziscws.entidades.DptoPolicia;
 import com.ziscws.hibernate.HibernateUtil;
@@ -24,6 +25,7 @@ public class DptoDAO {
     private Session session;
     private Criteria criteria;
     private final JsonFactory factory = new JsonFactory();
+    Gson gson = new Gson();
 
     public String buscaDpto() {
         session = HibernateUtil.getSessionFactory().openSession();
@@ -38,9 +40,12 @@ public class DptoDAO {
             json = factory.toJsonRestriction(lista, "senha");
         } catch (HibernateException ex) {
             try {
-                tx.rollback();
+                if (tx != null) {
+                    tx.rollback();
+                }
+                json = gson.toJson(ex);
             } catch (RuntimeException e) {
-                e.printStackTrace();
+                json += gson.toJson(e);
             }
         } finally {
             session.close();

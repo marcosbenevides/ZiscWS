@@ -5,6 +5,7 @@
  */
 package com.ziscws.dao;
 
+import com.google.gson.Gson;
 import com.ziscws.hibernate.HibernateUtil;
 import com.ziscws.entidades.Usuario;
 import com.ziscws.entidades.Endereco;
@@ -27,6 +28,7 @@ public class EnderecoDAO {
     private Criteria criteria;
     private Disjunction disjunction;
     private JsonFactory factory = new JsonFactory();
+    Gson gson = new Gson();
 
     public String buscaEnderecoUsuario(Usuario usuario) {
         session = HibernateUtil.getSessionFactory().openSession();
@@ -43,9 +45,12 @@ public class EnderecoDAO {
             tx.commit();
         } catch (HibernateException ex) {
             try {
-                tx.rollback();
+                if (tx != null) {
+                    tx.rollback();
+                }
+                json = gson.toJson(ex);
             } catch (RuntimeException e) {
-                e.printStackTrace();
+                json += gson.toJson(e);
             }
         } finally {
             session.close();
@@ -69,9 +74,12 @@ public class EnderecoDAO {
             tx.commit();
         } catch (HibernateException ex) {
             try {
-                tx.rollback();
+                if (tx != null) {
+                    tx.rollback();
+                }
+                json = gson.toJson(ex);
             } catch (RuntimeException e) {
-                e.printStackTrace();
+                json += gson.toJson(e);
             }
         } finally {
             session.close();

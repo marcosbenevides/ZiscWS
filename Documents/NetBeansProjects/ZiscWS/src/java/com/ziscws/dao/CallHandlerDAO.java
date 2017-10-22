@@ -26,6 +26,7 @@ public class CallHandlerDAO {
     private Session session;
     private Criteria criteria;
     private final JsonFactory factory = new JsonFactory();
+    Gson gson = new Gson();
 
     /**
      * Cria um novo CallHandler no banco de dados
@@ -46,9 +47,11 @@ public class CallHandlerDAO {
             tx.commit();
         } catch (HibernateException ex) {
             try {
-                tx.rollback();
+                if (tx != null) {
+                    tx.rollback();
+                }
             } catch (RuntimeException e) {
-                e.printStackTrace();
+                return factory.toJsonRestriction(e, "senha");
             }
         } finally {
             session.close();
@@ -78,9 +81,12 @@ public class CallHandlerDAO {
             tx.commit();
         } catch (HibernateException ex) {
             try {
-                tx.rollback();
+                if (tx != null) {
+                    tx.rollback();
+                }
+                json = gson.toJson(ex);
             } catch (RuntimeException e) {
-                e.printStackTrace();
+                json += gson.toJson(e);
             }
         } finally {
             session.close();
@@ -111,9 +117,12 @@ public class CallHandlerDAO {
             tx.commit();
         } catch (HibernateException ex) {
             try {
-                tx.rollback();
+                if (tx != null) {
+                    tx.rollback();
+                }
+                json = gson.toJson(ex);
             } catch (RuntimeException e) {
-                e.printStackTrace();
+                json += gson.toJson(e);
             }
         } finally {
             session.close();

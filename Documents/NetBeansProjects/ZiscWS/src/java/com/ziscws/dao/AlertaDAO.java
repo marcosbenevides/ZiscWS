@@ -18,7 +18,9 @@ import java.util.logging.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Restrictions;
 
 /**
@@ -28,6 +30,7 @@ import org.hibernate.criterion.Restrictions;
  */
 public class AlertaDAO {
 
+    private static SessionFactory sessionFactory;
     private Session session;
     private Criteria criteria;
     private final JsonFactory factory = new JsonFactory();
@@ -35,6 +38,12 @@ public class AlertaDAO {
     Gson gson = new Gson();
 
     public AlertaDAO() {
+        try {
+            sessionFactory = new Configuration().configure().buildSessionFactory();
+        } catch (HibernateException t) {
+            throw new ExceptionInInitializerError(t);
+        }
+
     }
 
     /**
@@ -45,7 +54,7 @@ public class AlertaDAO {
      * @return Json do alerta
      */
     public String novoAlerta(Alerta alerta, Long usuario) {
-        session = HibernateUtil.getSessionFactory().openSession();
+        session = sessionFactory.openSession();
         Transaction tx = null;
         String json = null;
         try {
@@ -69,9 +78,9 @@ public class AlertaDAO {
                 if (tx != null) {
                     tx.rollback();
                 }
-                json = gson.toJson(ex);
+                ex.printStackTrace();
             } catch (RuntimeException e) {
-                json += gson.toJson(e);
+                e.printStackTrace();
             }
         } finally {
             session.close();
@@ -87,7 +96,7 @@ public class AlertaDAO {
      * @return Lista de Alertas que estão dentro de um raio de 2KM
      */
     public String buscaPorLocal(String longitude, String latitude) {
-        session = HibernateUtil.getSessionFactory().openSession();
+        session = sessionFactory.openSession();
         Transaction tx = null;
         String json = null;
 
@@ -114,9 +123,9 @@ public class AlertaDAO {
                 if (tx != null) {
                     tx.rollback();
                 }
-                json = gson.toJson(ex);
+                ex.printStackTrace();
             } catch (RuntimeException e) {
-                json += gson.toJson(e);
+                e.printStackTrace();
             }
         } finally {
             session.close();
@@ -132,7 +141,7 @@ public class AlertaDAO {
      * @return String Json
      */
     public String buscaAlertaID(Long id) {
-        session = HibernateUtil.getSessionFactory().openSession();
+        session = sessionFactory.openSession();
         Transaction tx = null;
         String json = null;
 
@@ -155,9 +164,9 @@ public class AlertaDAO {
                 if (tx != null) {
                     tx.rollback();
                 }
-                json = gson.toJson(ex);
+                ex.printStackTrace();
             } catch (RuntimeException e) {
-                json += gson.toJson(e);
+                e.printStackTrace();
             }
         } finally {
             session.close();
@@ -172,7 +181,7 @@ public class AlertaDAO {
      * @return String Json com os Alertas
      */
     public String buscaAlertaUsuario(Usuario usuario) {
-        session = HibernateUtil.getSessionFactory().openSession();
+        session = sessionFactory.openSession();
         Transaction tx = null;
         String json = null;
 
@@ -195,6 +204,8 @@ public class AlertaDAO {
                 if (tx != null) {
                     tx.rollback();
                 }
+                ex.printStackTrace();
+
                 json = gson.toJson(ex);
             } catch (RuntimeException e) {
                 json += gson.toJson(e);
@@ -232,7 +243,7 @@ public class AlertaDAO {
     }
 
     public String todosAlertas() {
-        session = HibernateUtil.getSessionFactory().openSession();
+        session = sessionFactory.openSession();
         Transaction tx = null;
         String json = null;
 
@@ -250,6 +261,7 @@ public class AlertaDAO {
                 if (tx != null) {
                     tx.rollback();
                 }
+                ex.printStackTrace();
             } catch (RuntimeException e) {
                 e.printStackTrace();
             }

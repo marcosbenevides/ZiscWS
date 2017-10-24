@@ -14,7 +14,9 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
 
 /**
  *
@@ -22,13 +24,23 @@ import org.hibernate.Transaction;
  */
 public class DptoDAO {
 
+    private static SessionFactory sessionFactory;
+
     private Session session;
     private Criteria criteria;
     private final JsonFactory factory = new JsonFactory();
     Gson gson = new Gson();
 
+    public DptoDAO() {
+        try {
+            sessionFactory = new Configuration().configure().buildSessionFactory();
+        } catch (HibernateException t) {
+            throw new ExceptionInInitializerError(t);
+        }
+    }
+
     public String buscaDpto() {
-        session = HibernateUtil.getSessionFactory().openSession();
+        session = sessionFactory.openSession();
         Transaction tx = null;
         String json = null;
 
@@ -43,9 +55,9 @@ public class DptoDAO {
                 if (tx != null) {
                     tx.rollback();
                 }
-                json = gson.toJson(ex);
+                ex.printStackTrace();
             } catch (RuntimeException e) {
-                json += gson.toJson(e);
+                e.printStackTrace();
             }
         } finally {
             session.close();

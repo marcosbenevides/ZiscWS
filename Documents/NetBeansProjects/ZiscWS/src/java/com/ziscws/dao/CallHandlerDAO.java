@@ -13,7 +13,9 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Restrictions;
 
 /**
@@ -23,10 +25,20 @@ import org.hibernate.criterion.Restrictions;
  */
 public class CallHandlerDAO {
 
+    private static SessionFactory sessionFactory;
+
     private Session session;
     private Criteria criteria;
     private final JsonFactory factory = new JsonFactory();
     Gson gson = new Gson();
+
+    public CallHandlerDAO() {
+        try {
+            sessionFactory = new Configuration().configure().buildSessionFactory();
+        } catch (HibernateException t) {
+            throw new ExceptionInInitializerError(t);
+        }
+    }
 
     /**
      * Cria um novo CallHandler no banco de dados
@@ -35,7 +47,7 @@ public class CallHandlerDAO {
      * @return call criado.
      */
     public String setCallHandler(CallHandler callHandler) {
-        session = HibernateUtil.getSessionFactory().openSession();
+        session = sessionFactory.openSession();
         Transaction tx = null;
         String json = null;
 
@@ -50,8 +62,9 @@ public class CallHandlerDAO {
                 if (tx != null) {
                     tx.rollback();
                 }
+                ex.printStackTrace();
             } catch (RuntimeException e) {
-                return factory.toJsonRestriction(e, "senha");
+                e.printStackTrace();
             }
         } finally {
             session.close();
@@ -66,7 +79,7 @@ public class CallHandlerDAO {
      * @return lista de calls
      */
     public String getCall() {
-        session = HibernateUtil.getSessionFactory().openSession();
+        session = sessionFactory.openSession();
         Transaction tx = null;
         String json = null;
 
@@ -84,9 +97,9 @@ public class CallHandlerDAO {
                 if (tx != null) {
                     tx.rollback();
                 }
-                json = gson.toJson(ex);
+                ex.printStackTrace();
             } catch (RuntimeException e) {
-                json += gson.toJson(e);
+                e.printStackTrace();
             }
         } finally {
             session.close();
@@ -102,7 +115,7 @@ public class CallHandlerDAO {
      */
     public String getCall(Long id) {
 
-        session = HibernateUtil.getSessionFactory().openSession();
+        session = sessionFactory.openSession();
         Transaction tx = null;
         String json = null;
         Gson gson = new Gson();
@@ -120,9 +133,9 @@ public class CallHandlerDAO {
                 if (tx != null) {
                     tx.rollback();
                 }
-                json = gson.toJson(ex);
+                ex.printStackTrace();
             } catch (RuntimeException e) {
-                json += gson.toJson(e);
+                e.printStackTrace();
             }
         } finally {
             session.close();

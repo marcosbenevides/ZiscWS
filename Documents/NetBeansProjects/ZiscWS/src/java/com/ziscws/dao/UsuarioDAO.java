@@ -18,7 +18,9 @@ import java.util.logging.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Restrictions;
 
@@ -27,6 +29,8 @@ import org.hibernate.criterion.Restrictions;
  * @author Avanti Premium
  */
 public class UsuarioDAO {
+
+    private static SessionFactory sessionFactory;
 
     private Gson gson = new Gson();
     private Session session;
@@ -39,6 +43,11 @@ public class UsuarioDAO {
      * Construtor inicia o Logger.
      */
     public UsuarioDAO() {
+        try {
+            sessionFactory = new Configuration().configure().buildSessionFactory();
+        } catch (HibernateException t) {
+            throw new ExceptionInInitializerError(t);
+        }
 
     }
 
@@ -53,7 +62,7 @@ public class UsuarioDAO {
      */
     public String buscaUsuarioJson(String email, String restricao) {
 
-        session = HibernateUtil.getSessionFactory().openSession();
+        session = sessionFactory.openSession();
         Transaction tx = null;
         String json = null;
 
@@ -69,9 +78,9 @@ public class UsuarioDAO {
                 if (tx != null) {
                     tx.rollback();
                 }
-                json = gson.toJson(ex);
+                ex.printStackTrace();
             } catch (RuntimeException e) {
-                json += gson.toJson(e);
+                e.printStackTrace();
             }
         } finally {
             session.close();
@@ -89,7 +98,7 @@ public class UsuarioDAO {
      */
     public Usuario buscaUsuario(Long id) {
 
-        session = HibernateUtil.getSessionFactory().openSession();
+        session = sessionFactory.openSession();
         Transaction tx = null;
         String json = null;
         Usuario usuario = null;
@@ -106,9 +115,9 @@ public class UsuarioDAO {
                 if (tx != null) {
                     tx.rollback();
                 }
-                json = gson.toJson(ex);
+                ex.printStackTrace();
             } catch (RuntimeException e) {
-                json += gson.toJson(e);
+                e.printStackTrace();
             }
         } finally {
             session.close();
@@ -130,7 +139,7 @@ public class UsuarioDAO {
      */
     public String login(String email, String password, LogLogin log) {
 
-        session = HibernateUtil.getSessionFactory().openSession();
+        session = sessionFactory.openSession();
         Transaction tx = null;
         String json = null;
 
@@ -158,9 +167,9 @@ public class UsuarioDAO {
                 if (tx != null) {
                     tx.rollback();
                 }
-                json = gson.toJson(ex);
+                ex.printStackTrace();
             } catch (RuntimeException e) {
-                json += gson.toJson(e);
+                e.printStackTrace();
             }
         } finally {
             session.close();
@@ -178,7 +187,7 @@ public class UsuarioDAO {
      */
     public boolean usuarioCadastrado(String email) {
 
-        session = HibernateUtil.getSessionFactory().openSession();
+        session = sessionFactory.openSession();
         Transaction tx = null;
         List list = null;
         try {
@@ -193,6 +202,7 @@ public class UsuarioDAO {
                 if (tx != null) {
                     tx.rollback();
                 }
+                ex.printStackTrace();
             } catch (RuntimeException e) {
                 e.printStackTrace();
             }
@@ -211,7 +221,7 @@ public class UsuarioDAO {
      */
     public String novoUsuario(Usuario usuario) {
 
-        session = HibernateUtil.getSessionFactory().openSession();
+        session = sessionFactory.openSession();
         Transaction tx = null;
         String json = null;
 
@@ -225,6 +235,7 @@ public class UsuarioDAO {
                 if (tx != null) {
                     tx.rollback();
                 }
+                ex.printStackTrace();
             } catch (RuntimeException e) {
                 e.printStackTrace();
             }

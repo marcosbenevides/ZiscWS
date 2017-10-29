@@ -14,7 +14,9 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Restrictions;
 
@@ -24,14 +26,24 @@ import org.hibernate.criterion.Restrictions;
  */
 public class EnderecoDAO {
 
+    private static SessionFactory sessionFactory;
+
     private Session session;
     private Criteria criteria;
     private Disjunction disjunction;
     private JsonFactory factory = new JsonFactory();
     Gson gson = new Gson();
 
+    public EnderecoDAO() {
+        try {
+            sessionFactory = new Configuration().configure().buildSessionFactory();
+        } catch (HibernateException t) {
+            throw new ExceptionInInitializerError(t);
+        }
+    }
+
     public String buscaEnderecoUsuario(Usuario usuario) {
-        session = HibernateUtil.getSessionFactory().openSession();
+        session = sessionFactory.openSession();
         Transaction tx = null;
         String json = null;
 
@@ -48,9 +60,9 @@ public class EnderecoDAO {
                 if (tx != null) {
                     tx.rollback();
                 }
-                json = gson.toJson(ex);
+                ex.printStackTrace();
             } catch (RuntimeException e) {
-                json += gson.toJson(e);
+                e.printStackTrace();
             }
         } finally {
             session.close();
@@ -59,7 +71,7 @@ public class EnderecoDAO {
     }
 
     public String novoEndereco(Endereco endereco, Long idusuario) {
-        session = HibernateUtil.getSessionFactory().openSession();
+        session = sessionFactory.openSession();
         Transaction tx = null;
         String json = null;
         Usuario usuario = null;
@@ -77,9 +89,9 @@ public class EnderecoDAO {
                 if (tx != null) {
                     tx.rollback();
                 }
-                json = gson.toJson(ex);
+                ex.printStackTrace();
             } catch (RuntimeException e) {
-                json += gson.toJson(e);
+                e.printStackTrace();
             }
         } finally {
             session.close();

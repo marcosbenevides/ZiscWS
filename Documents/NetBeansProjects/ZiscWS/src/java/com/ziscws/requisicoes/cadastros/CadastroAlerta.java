@@ -43,7 +43,7 @@ public class CadastroAlerta {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response novoAlerta(@FormParam("id") String idusuario,
-            @FormParam("logHora") Date logHora,
+            //@FormParam("logHora") Date logHora,
             @FormParam("longitude") String longitude,
             @FormParam("latitude") String latitude,
             @FormParam("bairro") String bairro,
@@ -54,7 +54,7 @@ public class CadastroAlerta {
             @FormParam("ePositivo") Boolean ePositivo) {
 
         AlertaDAO daoA = new AlertaDAO();
-        Alerta alerta = new Alerta(logHora, longitude, latitude, bairro,
+        Alerta alerta = new Alerta(new Date(System.currentTimeMillis()), longitude, latitude, bairro,
                 cidade, estado, observacao, tipo, ePositivo, true);
         
         return Response

@@ -142,7 +142,7 @@ public class UsuarioDAO {
             criteria.add(Restrictions.eq("email", email));
             criteria.add(Restrictions.eq("senha", password));
 
-            json = factory.toJsonRestriction((Usuario) criteria.uniqueResult(), "senha");
+            json = factory.toJsonRestriction(criteria.uniqueResult(), "senha");
             if (json.contains("null")) {
                 LOGGER.info("Loggin não efetuado!");
                 tx.commit();

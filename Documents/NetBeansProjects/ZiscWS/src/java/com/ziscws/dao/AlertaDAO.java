@@ -21,6 +21,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 /**
@@ -64,15 +65,9 @@ public class AlertaDAO {
             Usuario user = (Usuario) session.load(Usuario.class, usuario);
             alerta.setUsuario(user);
             session.saveOrUpdate(alerta);
+
             tx.commit();
-            json = buscaAlertaID(alerta.getId());
-            if (json.contains(null)) {
-                LOGGER.setLevel(Level.SEVERE);
-                LOGGER.info("Aconteceu algum erro, Alerta não criado! Checar Log do servidor.");
-            } else {
-                LOGGER.setLevel(Level.INFO);
-                LOGGER.log(Level.INFO, "Alerta criado -> {0}", new Date());
-            }
+
         } catch (HibernateException ex) {
             try {
                 if (tx != null) {
@@ -85,6 +80,8 @@ public class AlertaDAO {
         } finally {
             session.close();
         }
+        json = buscaAlertaID(alerta.getId());
+
         return json;
     }
 
@@ -150,9 +147,10 @@ public class AlertaDAO {
             criteria = session.createCriteria(Alerta.class);
             tx.setTimeout(5);
             criteria.add(Restrictions.eq("id", id));
-            json = factory.toJsonRestriction(criteria.uniqueResult(), "senha");
+            Alerta alerta = (Alerta) criteria.uniqueResult();
+            json = factory.toJsonRestriction(alerta, "senha");
 
-            if (json.contains(null)) {
+            if (json.contains("null")) {
                 LOGGER.log(Level.INFO, "Alerta do id {0} n\u00e3o foi encontrado.", id);
             } else {
                 LOGGER.log(Level.INFO, "Alerta do id {0} encontrado.", id);

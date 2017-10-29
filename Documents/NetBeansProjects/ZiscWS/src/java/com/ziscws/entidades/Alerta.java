@@ -66,6 +66,11 @@ public class Alerta implements Serializable {
     @Column(name = "ATIVO", nullable = false)
     private Boolean ativo;
 
+    @Override
+    public String toString() {
+        return "Alerta{" + "id=" + id + ", usuario=" + usuario + ", logHora=" + logHora + ", longitude=" + longitude + ", latitude=" + latitude + ", bairro=" + bairro + ", cidade=" + cidade + ", estado=" + estado + ", observacao=" + observacao + ", tipo=" + tipo + ", ePositivo=" + ePositivo + ", ativo=" + ativo + '}';
+    }
+
     public Alerta(Date logHora, String longitude, String latitude, String bairro, String cidade, String estado, String observacao, String tipo, Boolean ePositivo, Boolean ativo) {
         this.logHora = logHora;
         this.longitude = longitude;

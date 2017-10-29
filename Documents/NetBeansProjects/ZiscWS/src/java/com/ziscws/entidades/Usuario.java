@@ -5,6 +5,7 @@
  */
 package com.ziscws.entidades;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.Column;
@@ -23,7 +24,7 @@ import org.hibernate.annotations.Cascade;
  */
 @Entity
 @Table(name = "TBL_USUARIO", schema = "dbo")
-public class Usuario {
+public class Usuario implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,6 +53,11 @@ public class Usuario {
     @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     transient private Set<Alerta> alertas = new HashSet<>();
+
+    @Override
+    public String toString() {
+        return "Usuario{" + "id=" + id + ", nome=" + nome + ", email=" + email + ", cpf=" + cpf + ", celular=" + celular + ", senha=" + senha + ", enderecos=" + enderecos + ", alertas=" + alertas + '}';
+    }
 
     public Usuario(String nome, String email, String cpf, String celular, String senha) {
         this.nome = nome;

@@ -8,10 +8,8 @@ package com.ziscws.dao;
 import com.google.gson.Gson;
 import com.ziscws.entidades.Alerta;
 import com.ziscws.entidades.Usuario;
-import com.ziscws.hibernate.HibernateUtil;
 import com.ziscws.util.JsonFactory;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,7 +19,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 /**
@@ -65,7 +62,6 @@ public class AlertaDAO {
             Usuario user = (Usuario) session.load(Usuario.class, usuario);
             alerta.setUsuario(user);
             session.saveOrUpdate(alerta);
-
             tx.commit();
 
         } catch (HibernateException ex) {
@@ -113,7 +109,11 @@ public class AlertaDAO {
                     listaNova.add(listaCompleta.get(i));
                 }
             }
-            json = factory.toJsonRestriction(listaNova, "senha");
+            if (listaNova.size() == 0) {
+                json = "null";
+            } else {
+                json = factory.toJsonRestriction(listaNova, "senha");
+            }
             tx.commit();
         } catch (HibernateException ex) {
             try {

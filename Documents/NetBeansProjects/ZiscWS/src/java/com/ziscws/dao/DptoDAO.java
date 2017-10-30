@@ -6,9 +6,7 @@
 package com.ziscws.dao;
 
 import com.google.gson.Gson;
-import com.ziscws.entidades.Alerta;
 import com.ziscws.entidades.DptoPolicia;
-import com.ziscws.hibernate.HibernateUtil;
 import com.ziscws.util.JsonFactory;
 import java.util.List;
 import org.hibernate.Criteria;

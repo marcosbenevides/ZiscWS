@@ -7,10 +7,8 @@ package com.ziscws.dao;
 
 import com.google.gson.Gson;
 import com.ziscws.entidades.LogLogin;
-import com.ziscws.hibernate.HibernateUtil;
 import com.ziscws.util.JsonFactory;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -57,7 +55,7 @@ public class LogLoginDAO {
             json = factory.toJsonRestriction(log, "senha");
             tx.commit();
         } catch (HibernateException ex) {
-                       try {
+            try {
                 if (tx != null) {
                     tx.rollback();
                 }
@@ -65,7 +63,7 @@ public class LogLoginDAO {
             } catch (RuntimeException e) {
                 e.printStackTrace();
             }
-        }finally {
+        } finally {
             session.close();
         }
         return json;
@@ -86,7 +84,7 @@ public class LogLoginDAO {
             json = factory.toJsonRestriction(log, "senha");
             tx.commit();
         } catch (HibernateException ex) {
-                      try {
+            try {
                 if (tx != null) {
                     tx.rollback();
                 }
@@ -113,7 +111,7 @@ public class LogLoginDAO {
             session.saveOrUpdate(log);
             tx.commit();
         } catch (HibernateException ex) {
-                       try {
+            try {
                 if (tx != null) {
                     tx.rollback();
                 }

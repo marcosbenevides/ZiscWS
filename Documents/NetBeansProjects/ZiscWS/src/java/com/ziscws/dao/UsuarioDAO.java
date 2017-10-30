@@ -8,7 +8,6 @@ package com.ziscws.dao;
 import com.google.gson.Gson;
 import com.ziscws.entidades.LogLogin;
 import com.ziscws.entidades.Usuario;
-import com.ziscws.hibernate.HibernateUtil;
 import com.ziscws.util.JsonFactory;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -142,12 +141,12 @@ public class UsuarioDAO {
         session = sessionFactory.openSession();
         Transaction tx = null;
         String json = null;
+        LogLoginDAO logDAO = new LogLoginDAO();
 
         try {
             tx = session.beginTransaction();
             criteria = session.createCriteria(Usuario.class);
             tx.setTimeout(5);
-            LogLoginDAO logDAO = new LogLoginDAO();
             criteria.add(Restrictions.eq("email", email));
             criteria.add(Restrictions.eq("senha", password));
 
@@ -159,7 +158,6 @@ public class UsuarioDAO {
                 LOGGER.info("Loggin efetuado com sucesso!");
                 log.setUsuario((Usuario) criteria.uniqueResult());
                 tx.commit();
-                logDAO.novoLog(log);
             }
 
         } catch (HibernateException ex) {
@@ -174,6 +172,7 @@ public class UsuarioDAO {
         } finally {
             session.close();
         }
+        logDAO.novoLog(log);
 
         return json;
     }

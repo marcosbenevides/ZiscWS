@@ -89,7 +89,7 @@ public class DptoPolicia implements Serializable {
     
     @Override
     public String toString() {
-        return "DptoPolicia{" + "id=" + id + ", nome=" + nome + ", endereco=" + endereco + ", numero=" + numero + ", bairro=" + bairro + ", cidade=" + cidade + ", ddd=" + ddd + ", telefone=" + telefone + ", email=" + email + ", site=" + site + ", baseFixa=" + baseFixa + '}';
+        return "DptoPolicia{" + "id=" + id + ", nome=" + nome + ", endereco=" + endereco + ", numero=" + numero + ", bairro=" + bairro + ", cidade=" + cidade + ", ddd=" + ddd + ", telefone=" + telefone + ", email=" + email + ", site=" + site + ", baseFixa=" + baseFixa + "latitude=" + latitude + "longitude=" + longitude + '}';
     }
     
     public long getId() {

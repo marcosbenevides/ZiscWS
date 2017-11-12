@@ -8,7 +8,9 @@ package com.ziscws.requisicoes.cadastros;
 import com.ziscws.dao.AlertaDAO;
 import com.ziscws.entidades.Alerta;
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -53,8 +55,10 @@ public class CadastroAlerta {
             @FormParam("tipo") String tipo,
             @FormParam("ePositivo") Boolean ePositivo) {
 
+        Date date = new Date();
+        date = Calendar.getInstance(TimeZone.getTimeZone("GMT-03:00")).getTime();
         AlertaDAO daoA = new AlertaDAO();
-        Alerta alerta = new Alerta(new Date(System.currentTimeMillis()), longitude, latitude, bairro,
+        Alerta alerta = new Alerta(date, longitude, latitude, bairro,
                 cidade, estado, observacao, tipo, ePositivo, true);
         
         return Response

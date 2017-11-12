@@ -12,7 +12,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import org.hibernate.annotations.Type;
 
 
 /**
@@ -48,11 +47,15 @@ public class DptoPolicia implements Serializable {
     private String site;
     @Column(name = "BASE_FIXA")
     private Boolean baseFixa;
+    @Column(name = "LATITUDE")
+    private String latitude;
+    @Column(name = "LONGITUDE")
+    private String longitude;
 
     public DptoPolicia() {
     }
 
-    public DptoPolicia(String nome, String endereco, String numero, String bairro, String cidade, String ddd, String telefone, String email, String site, Boolean baseFixa) {
+    public DptoPolicia(String nome, String endereco, String numero, String bairro, String cidade, String ddd, String telefone, String email, String site, Boolean baseFixa, String latitude, String longitude) {
         this.nome = nome;
         this.endereco = endereco;
         this.numero = numero;
@@ -63,9 +66,11 @@ public class DptoPolicia implements Serializable {
         this.email = email;
         this.site = site;
         this.baseFixa = baseFixa;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
-    public DptoPolicia(long id, String nome, String endereco, String numero, String bairro, String cidade, String ddd, String telefone, String email, String site, Boolean baseFixa) {
+    public DptoPolicia(long id, String nome, String endereco, String numero, String bairro, String cidade, String ddd, String telefone, String email, String site, Boolean baseFixa, String latitude, String longitude) {
         this.id = id;
         this.nome = nome;
         this.endereco = endereco;
@@ -77,12 +82,14 @@ public class DptoPolicia implements Serializable {
         this.email = email;
         this.site = site;
         this.baseFixa = baseFixa;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     
     @Override
     public String toString() {
-        return "DptoPolicia{" + "id=" + id + ", nome=" + nome + ", endereco=" + endereco + ", numero=" + numero + ", bairro=" + bairro + ", cidade=" + cidade + ", ddd=" + ddd + ", telefone=" + telefone + ", email=" + email + ", site=" + site + ", baseFixa=" + baseFixa + '}';
+        return "DptoPolicia{" + "id=" + id + ", nome=" + nome + ", endereco=" + endereco + ", numero=" + numero + ", bairro=" + bairro + ", cidade=" + cidade + ", ddd=" + ddd + ", telefone=" + telefone + ", email=" + email + ", site=" + site + ", baseFixa=" + baseFixa + "latitude=" + latitude + "longitude=" + longitude + '}';
     }
     
     public long getId() {
@@ -171,6 +178,22 @@ public class DptoPolicia implements Serializable {
 
     public void setBaseFixa(Boolean baseFixa) {
         this.baseFixa = baseFixa;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
     }
     
     

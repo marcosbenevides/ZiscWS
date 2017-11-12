@@ -190,7 +190,7 @@ public class AlertaDAO {
             criteria.add(Restrictions.eq("usuario", usuario));
             List<Alerta> alertas = criteria.list();
             json = factory.toJsonRestriction(alertas, "senha");
-            if (json.contains(null)) {
+            if (json.contains("")) {
                 LOGGER.log(Level.INFO, "Alertas do usuario -> {0} n\u00e3o foram encontrados!", usuario.getId());
             } else {
                 LOGGER.log(Level.INFO, "Foram encontrados -> {0} alertas para o usuario -> {1}", new Object[]{alertas.size(), usuario.getId()});

@@ -96,7 +96,6 @@ public class NewCallHandler {
      * @return call modificada
      */
     @PUT
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response killCall(@FormParam("id") Long id_call) {
 

@@ -7,6 +7,8 @@ package com.ziscws.requisicoes.consultas;
  */
 import com.google.gson.Gson;
 import com.ziscws.dao.AlertaDAO;
+import com.ziscws.dao.UsuarioDAO;
+import com.ziscws.entidades.Usuario;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -69,4 +71,6 @@ public class ConsultaAlerta {
                         "GET, POST, PUT, DELETE, OPTIONS, HEAD")
                 .build();
     }
+    
+
 }

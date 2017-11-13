@@ -7,6 +7,8 @@ package com.ziscws.entidades;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.Calendar;
+import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -21,6 +23,8 @@ import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+import sun.util.BuddhistCalendar;
 
 /**
  *
@@ -50,12 +54,19 @@ public class LogLogin implements Serializable {
     
     @Column(name = "TIPO")
     private String tipo;
+    
+    @Column(name= "UUID")
+    private String key;
+    
+    @Column(name="ATIVO")
+    private int ativo;
 
     public LogLogin (Usuario usuario, Date log, String ip, String tipo) {
         this.usuario = usuario;
         this.log = log;
         this.ip = ip;
         this.tipo = tipo;
+        this.key = setKey();
     }
 
     public LogLogin(Date log, String ip, String tipo) {
@@ -106,6 +117,29 @@ public class LogLogin implements Serializable {
 
     public void setTipo(String tipo) {
         this.tipo = tipo;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public String setKey() {
+
+        return UUID.randomUUID().toString().replace("-", "");
+        
+    }
+
+    @Override
+    public String toString() {
+        return "LogLogin{" + "id=" + id + ", usuario=" + usuario + ", log=" + log + ", ip=" + ip + ", tipo=" + tipo + ", key=" + key + '}';
+    }
+
+    public int getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(int ativo) {
+        this.ativo = ativo;
     }
     
     

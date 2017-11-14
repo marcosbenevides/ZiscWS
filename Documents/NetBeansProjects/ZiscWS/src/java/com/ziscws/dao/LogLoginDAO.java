@@ -40,7 +40,7 @@ public class LogLoginDAO {
         }
     }
 
-    public String getHistorico(Long id) {
+    public String getHistorico(Long idUsuario) {
 
         session = sessionFactory.openSession();
         Transaction tx = null;
@@ -50,7 +50,7 @@ public class LogLoginDAO {
             tx = session.beginTransaction();
             criteria = session.createCriteria(LogLogin.class);
             tx.setTimeout(5);
-            criteria.add(Restrictions.eq("usuario", id));
+            criteria.add(Restrictions.eq("usuario", idUsuario));
             List<LogLogin> log = criteria.list();
             json = factory.toJsonRestriction(log, "senha");
             tx.commit();
@@ -99,16 +99,86 @@ public class LogLoginDAO {
         return json;
     }
 
-    public void novoLog(LogLogin log) {
+    public String getHistoricoId(Long idHistorico) {
         session = sessionFactory.openSession();
         Transaction tx = null;
         String json = null;
+        try {
+            tx = session.beginTransaction();
+            criteria = session.createCriteria(LogLogin.class);
+            tx.setTimeout(5);
+            criteria.add(Restrictions.eq("id", idHistorico));
+            LogLogin log = (LogLogin) criteria.uniqueResult();
+            json = factory.toJsonRestriction(log, "senha");
+            tx.commit();
+        } catch (HibernateException ex) {
+            try {
+                if (tx != null) {
+                    tx.rollback();
+                }
+                ex.printStackTrace();
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+            }
+        } finally {
+            //session.close();
+        }
+        return json;
+    }
+
+    public String novoLog(LogLogin log) {
+        Transaction tx = null;
+        String json = null;
+        try {
+            if (deslogar(log)) {
+                session = sessionFactory.openSession();
+                tx = session.beginTransaction();
+                criteria = session.createCriteria(LogLogin.class);
+                tx.setTimeout(5);
+
+                session.save(log);
+            } else {
+                return "null";
+            }
+            tx.commit();
+        } catch (HibernateException ex) {
+            try {
+                if (tx != null) {
+                    tx.rollback();
+                }
+                ex.printStackTrace();
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+            }
+        } finally {
+            //session.close();
+        }
+        return getHistoricoId(log.getId());
+    }
+
+    private boolean deslogar(LogLogin log) {
+        session = sessionFactory.openSession();
+        Transaction tx = null;
+        String json = null;
+        Integer count = 0;
 
         try {
             tx = session.beginTransaction();
             criteria = session.createCriteria(LogLogin.class);
             tx.setTimeout(5);
-            session.saveOrUpdate(log);
+
+            criteria.add(Restrictions.eq("usuario", log.getUsuario()));
+            criteria.add(Restrictions.eq("ativo", 1));
+
+            List<LogLogin> lista = criteria.list();
+
+            if (lista.size() >= 1) {
+                for (LogLogin login : lista) {
+                    login.setAtivo(2);
+                    session.saveOrUpdate(login);
+                }
+            }
+            count = criteria.list().size();
             tx.commit();
         } catch (HibernateException ex) {
             try {
@@ -122,5 +192,38 @@ public class LogLoginDAO {
         } finally {
             session.close();
         }
+        return count == 0;
     }
+
+    public boolean isUUIDValid(String UUID) {
+
+        session = sessionFactory.openSession();
+        Transaction tx = null;
+        String json = null;
+        Integer size = 0;
+        try {
+            tx = session.beginTransaction();
+            criteria = session.createCriteria(LogLogin.class);
+            tx.setTimeout(5);
+
+            criteria.add(Restrictions.eq("UUID", UUID));
+
+            size = criteria.list().size();
+            tx.commit();
+        } catch (HibernateException ex) {
+            try {
+                if (tx != null) {
+                    tx.rollback();
+                }
+                ex.printStackTrace();
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+            }
+        } finally {
+            session.close();
+        }
+
+        return size > 0;
+    }
+
 }

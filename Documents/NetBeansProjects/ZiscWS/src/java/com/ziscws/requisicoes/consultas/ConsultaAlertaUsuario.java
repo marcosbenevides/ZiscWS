@@ -5,6 +5,7 @@
  */
 package com.ziscws.requisicoes.consultas;
 
+import com.ziscws.application.Secured;
 import com.ziscws.dao.AlertaDAO;
 import com.ziscws.dao.UsuarioDAO;
 import javax.ws.rs.GET;
@@ -23,6 +24,7 @@ public class ConsultaAlertaUsuario {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @Secured
     public Response alertasUsuario(@PathParam("id") int idUsuario) {
         AlertaDAO dao = new AlertaDAO();
         UsuarioDAO userDao = new UsuarioDAO();

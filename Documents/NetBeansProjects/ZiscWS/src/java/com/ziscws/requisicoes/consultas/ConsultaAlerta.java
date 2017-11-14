@@ -5,10 +5,7 @@ package com.ziscws.requisicoes.consultas;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-import com.google.gson.Gson;
 import com.ziscws.dao.AlertaDAO;
-import com.ziscws.dao.UsuarioDAO;
-import com.ziscws.entidades.Usuario;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;

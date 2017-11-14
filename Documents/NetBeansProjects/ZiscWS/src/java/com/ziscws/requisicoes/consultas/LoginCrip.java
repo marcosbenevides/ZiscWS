@@ -49,7 +49,6 @@ public class LoginCrip {
             @Context HttpServletRequest request) throws NoSuchAlgorithmException, UnsupportedEncodingException, CloneNotSupportedException {
 
         UsuarioDAO dao = new UsuarioDAO();
-        LogLoginDAO logDAO = new LogLoginDAO();
         /*
         *Captando as informações para o Loglogin
          */

@@ -67,12 +67,15 @@ public class LogLogin implements Serializable {
         this.ip = ip;
         this.tipo = tipo;
         this.key = setKey();
+        this.ativo = 1;
     }
 
     public LogLogin(Date log, String ip, String tipo) {
         this.log = log;
         this.ip = ip;
         this.tipo = tipo;
+        this.key = setKey();
+        this.ativo = 1;
     }
 
     public LogLogin() {

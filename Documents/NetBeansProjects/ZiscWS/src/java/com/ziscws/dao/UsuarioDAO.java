@@ -149,16 +149,14 @@ public class UsuarioDAO {
             tx.setTimeout(5);
             criteria.add(Restrictions.eq("email", email));
             criteria.add(Restrictions.eq("senha", password));
-
-            json = factory.toJsonRestriction(criteria.uniqueResult(), "senha");
-            if (json.contains("null")) {
-                LOGGER.info("Loggin não efetuado!");
-                tx.commit();
+            List<Usuario> usuario = criteria.list();
+            if (usuario.size() == 1) {
+                log.setUsuario(usuario.get(0));
+                json = logDAO.novoLog(log);
             } else {
-                LOGGER.info("Loggin efetuado com sucesso!");
-                log.setUsuario((Usuario) criteria.uniqueResult());
-                tx.commit();
+                json = "Login ou senha inválidos!";
             }
+            tx.commit();
 
         } catch (HibernateException ex) {
             try {
@@ -172,7 +170,6 @@ public class UsuarioDAO {
         } finally {
             session.close();
         }
-        logDAO.novoLog(log);
 
         return json;
     }

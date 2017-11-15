@@ -206,7 +206,7 @@ public class LogLoginDAO {
             criteria = session.createCriteria(LogLogin.class);
             tx.setTimeout(5);
 
-            criteria.add(Restrictions.eq("UUID", UUID));
+            criteria.add(Restrictions.eq("key", UUID));
 
             size = criteria.list().size();
             tx.commit();
